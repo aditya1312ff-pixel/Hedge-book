@@ -42,8 +42,31 @@
   h1 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.2px; }
   .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .header-actions { margin-left: auto; display: flex; gap: 8px; }
-
   .wrap { padding: 28px 32px 60px; max-width: 1800px; margin: 0 auto; }
+
+  .metal-picker {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border); border-radius: 16px;
+    padding: 16px 20px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  .metal-picker .mp-label { font-size: 12px; font-weight: 700; color: #a7b6d4; text-transform: uppercase; letter-spacing: .8px; }
+  .metal-picker .mp-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+  .metal-btn {
+    padding: 11px 22px; border-radius: 10px;
+    background: var(--panel); border: 1.5px solid var(--border);
+    color: var(--text); font-size: 13.5px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all .15s ease;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .metal-btn:hover:not(.disabled) { border-color: var(--accent); background: var(--panel-2); }
+  .metal-btn.active { background: linear-gradient(135deg, #4f8cff, #3b7de0); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(79,140,255,.4); }
+  .metal-btn[data-metal="ZINC"].active { background: linear-gradient(135deg, #a8a8a8, #7f7f7f); box-shadow: 0 4px 14px rgba(168,168,168,.4); }
+  .metal-btn[data-metal="BOTH"].active { background: linear-gradient(135deg, #4f8cff 0%, #a8a8a8 100%); box-shadow: 0 4px 14px rgba(79,140,255,.4); }
+  .metal-btn .count { background: rgba(255,255,255,.15); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .metal-btn:not(.active) .count { background: rgba(255,255,255,.06); color: var(--muted); }
+  .metal-btn.disabled { opacity: .35; cursor: not-allowed; }
 
   .drop {
     border: 1.5px dashed var(--border); border-radius: 16px; padding: 60px 24px;
@@ -51,173 +74,84 @@
     background: linear-gradient(180deg, rgba(17,28,51,.6), rgba(15,23,42,.4));
   }
   .drop:hover, .drop.over { border-color: var(--accent); background: linear-gradient(180deg, rgba(17,28,51,.9), rgba(15,23,42,.6)); }
-  .drop-icon {
-    font-size: 44px; line-height: 1;
-    background: linear-gradient(135deg, #4f8cff, #22d3ee);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 12px;
-  }
+  .drop-icon { font-size: 44px; line-height: 1; background: linear-gradient(135deg, #4f8cff, #22d3ee); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
   .drop h3 { margin: 8px 0 6px; font-size: 17px; font-weight: 600; }
   .drop p { margin: 0; color: var(--muted); font-size: 13px; }
-  .drop .hint {
-    display: inline-block; margin-top: 18px; padding: 6px 12px;
-    background: rgba(79,140,255,.08); border: 1px solid rgba(79,140,255,.2);
-    border-radius: 999px; font-size: 11px; color: #a7c4ff;
-  }
-  .log {
-    margin-top: 16px; padding: 12px 16px;
-    background: #060d1c; border: 1px solid var(--border-soft); border-radius: 10px;
-    font-size: 11.5px; color: var(--muted-2);
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    white-space: pre-wrap; max-height: 180px; overflow: auto; line-height: 1.6;
-  }
+  .drop .hint { display: inline-block; margin-top: 18px; padding: 6px 12px; background: rgba(79,140,255,.08); border: 1px solid rgba(79,140,255,.2); border-radius: 999px; font-size: 11px; color: #a7c4ff; }
+  .file-list { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .file-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(79,140,255,.1); color: #a7c4ff; border: 1px solid rgba(79,140,255,.3); font-size: 12px; }
+  .file-chip.err { background: rgba(248,113,113,.1); color: #f87171; border-color: rgba(248,113,113,.3); }
+  .file-chip .x { cursor: pointer; opacity: .6; font-size: 14px; padding: 0 4px; }
+  .file-chip .x:hover { opacity: 1; color: var(--neg); }
+  .log { margin-top: 16px; padding: 12px 16px; background: #060d1c; border: 1px solid var(--border-soft); border-radius: 10px; font-size: 11.5px; color: var(--muted-2); font-family: 'JetBrains Mono', ui-monospace, monospace; white-space: pre-wrap; max-height: 180px; overflow: auto; line-height: 1.6; }
   .log:empty { display: none; }
 
-  .tabs {
-    display: flex; gap: 4px; margin: 24px 0 0;
-    background: var(--panel); padding: 4px;
-    border: 1px solid var(--border); border-radius: 12px;
-    width: fit-content;
-  }
-  .tab {
-    padding: 9px 20px; border-radius: 8px;
-    background: transparent; border: none; color: var(--muted);
-    cursor: pointer; font-size: 13px; font-weight: 500;
-    font-family: inherit; transition: all .15s ease;
-    position: relative;
-  }
+  .tabs { display: flex; gap: 4px; margin: 24px 0 0; background: var(--panel); padding: 4px; border: 1px solid var(--border); border-radius: 12px; width: fit-content; }
+  .tab { padding: 9px 20px; border-radius: 8px; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit; transition: all .15s ease; }
   .tab:hover { color: var(--text); background: var(--panel-2); }
-  .tab.active {
-    background: linear-gradient(135deg, #4f8cff, #3b7de0);
-    color: #fff; box-shadow: 0 4px 12px rgba(79,140,255,.3);
-  }
-  .tab .tab-badge {
-    display: inline-block; margin-left: 6px;
-    background: var(--neg); color: #fff;
-    border-radius: 999px; padding: 1px 7px;
-    font-size: 10px; font-weight: 700;
-  }
+  .tab.active { background: linear-gradient(135deg, #4f8cff, #3b7de0); color: #fff; box-shadow: 0 4px 12px rgba(79,140,255,.3); }
   .tab-panel { display: none; animation: fade .3s ease; }
   .tab-panel.active { display: block; }
   @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-  .cards {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 14px; margin: 22px 0;
-  }
-  .card {
-    background: linear-gradient(180deg, var(--panel), var(--panel-2));
-    border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px;
-    position: relative; overflow: hidden;
-    transition: transform .15s ease, border-color .15s ease;
-  }
-  .card::after {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(79,140,255,.4), transparent);
-  }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: 22px 0; }
+  .card { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; position: relative; overflow: hidden; transition: transform .15s ease, border-color .15s ease; }
+  .card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(79,140,255,.4), transparent); }
   .card:hover { transform: translateY(-2px); border-color: #2a3f68; }
   .card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; font-weight: 500; }
   .card .value { font-size: 24px; font-weight: 700; margin-top: 8px; font-variant-numeric: tabular-nums; letter-spacing: -.4px; }
   .card .subval { font-size: 11px; color: var(--muted-2); margin-top: 4px; }
-  .pos { color: var(--pos); }
-  .neg { color: var(--neg); }
+  .pos { color: var(--pos); } .neg { color: var(--neg); }
 
-  /* Alerts */
-  .alerts-wrap {
-    background: linear-gradient(180deg, var(--panel), var(--panel-2));
-    border: 1px solid var(--border); border-radius: 14px;
-    padding: 16px 20px; margin-bottom: 22px;
-  }
-  .alerts-hdr {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 12px;
-  }
-  .alerts-hdr h3 {
-    margin: 0; font-size: 13px; font-weight: 600;
-    color: #c7d2e8; letter-spacing: .2px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .alerts-hdr .count-badge {
-    background: rgba(248,113,113,.15); color: #f87171;
-    border: 1px solid rgba(248,113,113,.3);
-    border-radius: 999px; padding: 2px 9px;
-    font-size: 11px; font-weight: 700;
-  }
-  .alerts-hdr .count-badge.ok {
-    background: rgba(52,211,153,.15); color: #34d399;
-    border-color: rgba(52,211,153,.3);
-  }
+  .exchange-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 22px 0; }
+  .exchange-box { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; position: relative; overflow: hidden; box-shadow: var(--shadow); }
+  .exchange-box::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .exchange-box.lme::before { background: linear-gradient(180deg, #7fb0ff, #4f8cff); }
+  .exchange-box.mcx::before { background: linear-gradient(180deg, #f0a35a, #d97706); }
+  .exchange-box h3 { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+  .exchange-box.lme h3 { color: #7fb0ff; }
+  .exchange-box.mcx h3 { color: #f0a35a; }
+  .exchange-box .ex-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .ex-cell { background: rgba(0,0,0,.2); border-radius: 10px; padding: 12px 14px; border: 1px solid var(--border-soft); }
+  .ex-cell .ex-label { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 500; }
+  .ex-cell .ex-value { font-size: 20px; font-weight: 700; margin-top: 5px; font-variant-numeric: tabular-nums; letter-spacing: -.3px; }
+  .ex-cell.wide { grid-column: span 2; }
+
+  .alerts-wrap { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; margin-bottom: 22px; }
+  .alerts-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .alerts-hdr h3 { margin: 0; font-size: 13px; font-weight: 600; color: #c7d2e8; letter-spacing: .2px; display: flex; align-items: center; gap: 8px; }
+  .alerts-hdr .count-badge { background: rgba(248,113,113,.15); color: #f87171; border: 1px solid rgba(248,113,113,.3); border-radius: 999px; padding: 2px 9px; font-size: 11px; font-weight: 700; }
+  .alerts-hdr .count-badge.ok { background: rgba(52,211,153,.15); color: #34d399; border-color: rgba(52,211,153,.3); }
   .alerts-toggles { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
-  .alert-toggle {
-    background: var(--panel); border: 1px solid var(--border);
-    color: var(--muted); padding: 5px 11px; border-radius: 999px;
-    font-size: 11px; cursor: pointer; font-family: inherit;
-    transition: all .15s;
-  }
+  .alert-toggle { background: var(--panel); border: 1px solid var(--border); color: var(--muted); padding: 5px 11px; border-radius: 999px; font-size: 11px; cursor: pointer; font-family: inherit; transition: all .15s; }
   .alert-toggle:hover { border-color: var(--accent); color: var(--text); }
-  .alert-toggle.on {
-    background: rgba(79,140,255,.12); color: #a7c4ff;
-    border-color: rgba(79,140,255,.4);
-  }
+  .alert-toggle.on { background: rgba(79,140,255,.12); color: #a7c4ff; border-color: rgba(79,140,255,.4); }
   .alerts-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow: auto; }
-  .alert-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 14px; border-radius: 10px;
-    background: rgba(248,113,113,.05);
-    border-left: 3px solid var(--neg);
-    cursor: pointer; transition: background .12s;
-    font-size: 12.5px;
-  }
+  .alert-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; background: rgba(248,113,113,.05); border-left: 3px solid var(--neg); cursor: pointer; transition: background .12s; font-size: 12.5px; }
   .alert-item:hover { background: rgba(248,113,113,.12); }
   .alert-item.warn { background: rgba(251,191,36,.05); border-left-color: var(--warn); }
   .alert-item.warn:hover { background: rgba(251,191,36,.12); }
   .alert-item.info { background: rgba(79,140,255,.05); border-left-color: var(--accent); }
   .alert-item.info:hover { background: rgba(79,140,255,.12); }
   .alert-item .a-icon { font-size: 16px; flex-shrink: 0; }
-  .alert-item .a-lot {
-    font-weight: 600; color: #fff; padding: 2px 8px;
-    background: rgba(255,255,255,.05); border-radius: 6px;
-    font-size: 11.5px; flex-shrink: 0;
-  }
+  .alert-item .a-lot { font-weight: 600; color: #fff; padding: 2px 8px; background: rgba(255,255,255,.05); border-radius: 6px; font-size: 11.5px; flex-shrink: 0; }
   .alert-item .a-msg { flex: 1; color: #c7d2e8; }
   .alert-item .a-val { color: var(--muted); font-size: 11.5px; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
   .alerts-empty { padding: 20px; text-align: center; color: var(--muted-2); font-style: italic; font-size: 12.5px; }
 
-  /* Date range + filters */
-  .filters-bar {
-    display: flex; gap: 10px; flex-wrap: wrap;
-    align-items: center; margin-bottom: 16px;
-    padding: 12px 16px; background: var(--panel);
-    border: 1px solid var(--border); border-radius: 12px;
-  }
+  .filters-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; padding: 12px 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
   .filters-bar label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
   .filters-bar .spacer { flex: 1; }
 
-  .charts {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-    gap: 16px; margin-bottom: 22px;
-  }
-  .chart-card {
-    background: linear-gradient(180deg, var(--panel), var(--panel-2));
-    border: 1px solid var(--border); border-radius: 14px;
-    padding: 18px 20px; box-shadow: var(--shadow);
-  }
+  .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px; margin-bottom: 22px; }
+  .chart-card { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow); }
   .chart-card h3 { margin: 0 0 14px; font-size: 13px; font-weight: 600; color: #c7d2e8; letter-spacing: .2px; }
   .chart-card .canvas-wrap { position: relative; height: 240px; }
 
   .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
   .search-wrap { position: relative; flex: 1; min-width: 240px; max-width: 360px; }
-  .search-wrap svg {
-    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-    width: 14px; height: 14px; color: var(--muted-2); pointer-events: none;
-  }
-  input, select, button {
-    font-family: inherit; font-size: 13px;
-    background: var(--panel); color: var(--text);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 9px 12px; outline: none;
-    transition: border-color .15s, background .15s;
-  }
+  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--muted-2); pointer-events: none; }
+  input, select, button { font-family: inherit; font-size: 13px; background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; outline: none; transition: border-color .15s, background .15s; }
   input:focus, select:focus { border-color: var(--accent); background: #16223d; }
   .search-wrap input { width: 100%; padding-left: 34px; }
   button { cursor: pointer; font-weight: 500; }
@@ -225,51 +159,39 @@
   button.primary { background: linear-gradient(135deg, #4f8cff, #3b7de0); border-color: transparent; color: #fff; }
   button.primary:hover { background: linear-gradient(135deg, #5f97ff, #4a8bf0); }
   button.ghost { background: transparent; }
-  select {
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a9ab8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 10px center;
-    padding-right: 30px;
-  }
+  select { appearance: none; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a9ab8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
 
-  .tablewrap {
-    border: 1px solid var(--border); border-radius: 14px; overflow: auto;
-    max-height: 72vh; background: var(--panel); box-shadow: var(--shadow);
-  }
-  table {
-    width: 100%; border-collapse: separate; border-spacing: 0;
-    font-size: 12.5px; font-variant-numeric: tabular-nums;
-  }
+  .tablewrap { border: 1px solid var(--border); border-radius: 14px; overflow: auto; max-height: 72vh; background: var(--panel); box-shadow: var(--shadow); }
+
+  /* ============ MAIN TABLE — SIMPLE SINGLE-ROW HEADER ============ */
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
+
   thead th {
     position: sticky; top: 0; z-index: 2;
     background: linear-gradient(180deg, #16223d, #111c33);
-    color: #a7b6d4; font-weight: 600; font-size: 11px;
-    text-transform: uppercase; letter-spacing: .5px;
-    padding: 10px 14px; text-align: right;
-    border-bottom: 1px solid var(--border); white-space: nowrap;
+    color: #a7b6d4; font-weight: 600; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: .3px;
+    padding: 10px 12px; text-align: right;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    line-height: 1.2;
+    vertical-align: middle;
     user-select: none;
   }
   thead th.sortable { cursor: pointer; }
   thead th.sortable:hover { color: var(--text); background: #1a2a4a; }
-  thead th .sort-arrow {
-    display: inline-block; margin-left: 6px;
-    font-size: 9px; color: var(--accent);
-    transition: opacity .15s;
-  }
+  thead th .sort-arrow { display: inline-block; margin-left: 3px; font-size: 8px; color: var(--accent); }
   thead th.sortable .sort-arrow.idle { opacity: .25; color: var(--muted-2); }
-  thead th:first-child, tbody td:first-child { text-align: left; }
-  thead tr.group th {
-    text-align: center; font-size: 10.5px; color: var(--muted);
-    padding: 6px 10px; background: #0e1830;
-    border-bottom: 1px solid var(--border-soft);
-  }
-  thead tr.group th.lme-g { color: #7fb0ff; }
-  thead tr.group th.mcx-g { color: #f0a35a; }
-  thead tr.group th.phys-g { color: #7fb0ff; }
-  thead tr.group th.dash-g { color: #c4b5fd; }
+  thead th:first-child, tbody td:first-child { text-align: left !important; }
+  thead th:nth-child(2), tbody td:nth-child(2) { text-align: left !important; }
+
   tbody td {
-    padding: 10px 14px; border-bottom: 1px solid var(--border-soft);
-    white-space: nowrap; text-align: right;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    white-space: nowrap;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   tbody tr.row-clickable { cursor: pointer; }
   tbody tr { transition: background .12s; }
@@ -277,42 +199,18 @@
   tbody td:first-child { font-weight: 600; }
   tbody tr:last-child td { border-bottom: none; }
 
-  /* Row status colors (#5) */
   tbody tr.status-danger td { background: rgba(248,113,113,.04); }
   tbody tr.status-danger:hover td { background: rgba(248,113,113,.12); }
-  tbody tr.status-danger td:first-child::before {
-    content: ''; display: inline-block; width: 3px; height: 12px;
-    background: var(--neg); border-radius: 2px; margin-right: 8px;
-    vertical-align: middle;
-  }
+  tbody tr.status-danger td:first-child::before { content: ''; display: inline-block; width: 3px; height: 12px; background: var(--neg); border-radius: 2px; margin-right: 6px; vertical-align: middle; }
   tbody tr.status-warn td { background: rgba(251,191,36,.03); }
   tbody tr.status-warn:hover td { background: rgba(251,191,36,.1); }
-  tbody tr.status-warn td:first-child::before {
-    content: ''; display: inline-block; width: 3px; height: 12px;
-    background: var(--warn); border-radius: 2px; margin-right: 8px;
-    vertical-align: middle;
-  }
-  tbody tr.status-ok td:first-child::before {
-    content: ''; display: inline-block; width: 3px; height: 12px;
-    background: var(--pos); border-radius: 2px; margin-right: 8px;
-    vertical-align: middle;
-  }
+  tbody tr.status-warn td:first-child::before { content: ''; display: inline-block; width: 3px; height: 12px; background: var(--warn); border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+  tbody tr.status-ok td:first-child::before { content: ''; display: inline-block; width: 3px; height: 12px; background: var(--pos); border-radius: 2px; margin-right: 6px; vertical-align: middle; }
 
-  /* Sticky totals row (#4) */
-  tfoot tr.totals-row td {
-    position: sticky; bottom: 0; z-index: 2;
-    background: linear-gradient(180deg, #16223d, #0e1830);
-    font-weight: 700; color: #fff; font-size: 12px;
-    border-top: 2px solid var(--accent);
-    border-bottom: none;
-    padding: 11px 14px;
-  }
-  tfoot tr.totals-row td:first-child {
-    position: sticky; left: 0; z-index: 4;
-    background: linear-gradient(180deg, #16223d, #0e1830);
-  }
+  tfoot tr.totals-row td { position: sticky; bottom: 0; z-index: 2; background: linear-gradient(180deg, #16223d, #0e1830); font-weight: 700; color: #fff; font-size: 11.5px; border-top: 2px solid var(--accent); border-bottom: none; padding: 10px 12px; white-space: nowrap; }
+  tfoot tr.totals-row td:first-child { position: sticky; left: 0; z-index: 4; background: linear-gradient(180deg, #16223d, #0e1830); text-align: left !important; }
 
-  .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 600; letter-spacing: .3px; }
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 10px; font-weight: 600; letter-spacing: .3px; white-space: nowrap; }
   .active { background: rgba(251,191,36,.12); color: #fbbf24; border: 1px solid rgba(251,191,36,.25); }
   .sq { background: rgba(52,211,153,.12); color: #34d399; border: 1px solid rgba(52,211,153,.25); }
   .b-danger { background: rgba(248,113,113,.12); color: #f87171; border: 1px solid rgba(248,113,113,.25); }
@@ -321,15 +219,11 @@
   .b-buy { background: rgba(52,211,153,.12); color: #34d399; border: 1px solid rgba(52,211,153,.25); }
   .b-sell { background: rgba(248,113,113,.12); color: #f87171; border: 1px solid rgba(248,113,113,.25); }
 
-  .metal-chip {
-    display: inline-block; padding: 2px 8px;
-    background: rgba(79,140,255,.1); color: #a7c4ff;
-    border: 1px solid rgba(79,140,255,.2);
-    border-radius: 6px; font-size: 11px; font-weight: 500;
-  }
+  .metal-chip { display: inline-block; padding: 2px 7px; background: rgba(79,140,255,.1); color: #a7c4ff; border: 1px solid rgba(79,140,255,.2); border-radius: 6px; font-size: 10.5px; font-weight: 500; white-space: nowrap; }
+  .metal-chip[data-metal="ZINC"], .metal-chip[data-metal="ZN"] { background: rgba(168,168,168,.12); color: #d4d4d4; border-color: rgba(168,168,168,.3); }
 
-  thead th:first-child { position: sticky; left: 0; z-index: 3; background: #16223d; }
-  tbody td:first-child { position: sticky; left: 0; background: var(--panel); }
+  thead th:first-child { position: sticky; left: 0; z-index: 3; background: #16223d; box-shadow: 4px 0 8px -4px rgba(0,0,0,.5); }
+  tbody td:first-child { position: sticky; left: 0; background: var(--panel); box-shadow: 4px 0 8px -4px rgba(0,0,0,.5); }
   tbody tr:hover td:first-child { background: #16223d; }
 
   ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -337,140 +231,64 @@
   ::-webkit-scrollbar-thumb { background: #1e2d4d; border-radius: 8px; }
   ::-webkit-scrollbar-thumb:hover { background: #2a3f68; }
 
-  .modal-bg {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.6);
-    backdrop-filter: blur(4px);
-    z-index: 100;
-    display: none;
-    align-items: center; justify-content: center;
-    padding: 40px 20px;
-    animation: fadeBg .2s ease;
-  }
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 40px 20px; animation: fadeBg .2s ease; }
   .modal-bg.open { display: flex; }
   @keyframes fadeBg { from { opacity: 0; } to { opacity: 1; } }
-
-  .modal {
-    background: linear-gradient(180deg, var(--panel), var(--panel-2));
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    box-shadow: 0 24px 48px rgba(0,0,0,.5);
-    width: 100%;
-    max-width: 1100px;
-    max-height: 88vh;
-    overflow: hidden;
-    display: flex; flex-direction: column;
-    animation: slideUp .25s ease;
-  }
+  .modal { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 24px 48px rgba(0,0,0,.5); width: 100%; max-width: 1100px; max-height: 88vh; overflow: hidden; display: flex; flex-direction: column; animation: slideUp .25s ease; }
   @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
-
-  .modal-hdr {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 16px;
-    background: linear-gradient(180deg, #16223d, #111c33);
-  }
+  .modal-hdr { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; background: linear-gradient(180deg, #16223d, #111c33); }
   .modal-hdr h2 { margin: 0; font-size: 17px; font-weight: 600; }
   .modal-hdr .m-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .modal-close {
-    margin-left: auto; width: 34px; height: 34px;
-    border-radius: 8px; background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted); font-size: 20px; cursor: pointer;
-    display: grid; place-items: center; padding: 0;
-  }
+  .modal-close { margin-left: auto; width: 34px; height: 34px; border-radius: 8px; background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 20px; cursor: pointer; display: grid; place-items: center; padding: 0; }
   .modal-close:hover { color: var(--neg); border-color: var(--neg); background: transparent; }
-
   .modal-body { padding: 20px 24px; overflow: auto; flex: 1; }
-
-  .modal-cards {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px; margin-bottom: 20px;
-  }
-  .modal-card {
-    background: #0e1830; border: 1px solid var(--border-soft);
-    border-radius: 10px; padding: 12px 14px;
-  }
+  .modal-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .modal-card { background: #0e1830; border: 1px solid var(--border-soft); border-radius: 10px; padding: 12px 14px; }
   .modal-card .label { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
   .modal-card .value { font-size: 18px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
-
   .modal-section { margin-bottom: 24px; }
-  .modal-section h3 {
-    margin: 0 0 10px; font-size: 12px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: .6px; color: #a7b6d4;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .modal-section h3 .count {
-    display: inline-block; padding: 1px 8px; border-radius: 999px;
-    background: rgba(79,140,255,.15); color: #a7c4ff;
-    font-size: 10px; font-weight: 600;
-  }
+  .modal-section h3 { margin: 0 0 10px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: #a7b6d4; display: flex; align-items: center; gap: 8px; }
+  .modal-section h3 .count { display: inline-block; padding: 1px 8px; border-radius: 999px; background: rgba(79,140,255,.15); color: #a7c4ff; font-size: 10px; font-weight: 600; }
 
-  .tx-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .tx-table th {
-    text-align: left; padding: 8px 10px;
-    background: #0e1830; color: var(--muted);
-    font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px;
-    font-weight: 600; border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  .tx-table th.num, .tx-table td.num { text-align: right; }
-  .tx-table td {
-    padding: 9px 10px; border-bottom: 1px solid var(--border-soft);
-    vertical-align: top;
-  }
-  .tx-table tr:last-child td { border-bottom: none; }
-  .tx-table tr:hover td { background: #16223d; }
-  .tx-table .empty {
-    text-align: center; color: var(--muted-2); padding: 20px;
-    font-style: italic; font-size: 12px;
-  }
+  .tx-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+  .tx-table thead th { text-align: left !important; padding: 9px 10px !important; background: #0e1830 !important; color: var(--muted) !important; font-size: 10.5px !important; text-transform: uppercase; letter-spacing: .4px; font-weight: 600 !important; border-bottom: 1px solid var(--border) !important; white-space: nowrap !important; line-height: 1.35; vertical-align: bottom; position: static !important; }
+  .tx-table thead th.num, .tx-table tbody td.num { text-align: right !important; white-space: nowrap !important; }
+  .tx-table thead th.date, .tx-table tbody td.date { text-align: left !important; white-space: nowrap !important; }
+  .tx-table thead th.party, .tx-table tbody td.party { text-align: left !important; }
+  .tx-table tbody td { padding: 9px 10px !important; border-bottom: 1px solid var(--border-soft) !important; vertical-align: top; text-align: left; font-variant-numeric: tabular-nums; background: transparent !important; position: static !important; font-weight: 400 !important; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.4; }
+  .tx-table tbody tr:last-child td { border-bottom: none !important; }
+  .tx-table tbody tr:hover td { background: #16223d !important; }
+  .tx-table tbody td:first-child { position: static !important; background: transparent !important; font-weight: 400 !important; box-shadow: none !important; }
+  .tx-table tbody td:first-child::before { display: none !important; }
+  .tx-table .empty { text-align: center !important; color: var(--muted-2); padding: 20px; font-style: italic; font-size: 12px; }
+  .tx-table .date  { width: 110px; }
+  .tx-table .party { width: auto; }
+  .tx-table .num   { width: 100px; }
 
-  /* ============ PRINT STYLES (#8) ============ */
   @media print {
-    body {
-      background: #fff !important;
-      color: #000 !important;
-      font-size: 11px !important;
-    }
-    header, .drop, .log, .controls, .filters-bar, .charts,
-    .tabs, .header-actions, button, .modal-bg, .alerts-toggles,
-    .search-wrap, select, input { display: none !important; }
+    body { background: #fff !important; color: #000 !important; font-size: 11px !important; }
+    header, .drop, .log, .controls, .filters-bar, .charts, .tabs, .header-actions, button, .modal-bg, .alerts-toggles, .search-wrap, select, input, .file-list, .metal-picker { display: none !important; }
     .wrap { padding: 0 !important; max-width: 100% !important; }
     .tab-panel { display: block !important; page-break-after: always; }
     .tab-panel:not(.active) { display: none !important; }
-    .tablewrap {
-      border: 1px solid #ccc !important;
-      box-shadow: none !important;
-      max-height: none !important;
-      overflow: visible !important;
-      background: #fff !important;
-    }
-    table { font-size: 10px !important; }
-    thead th {
-      background: #f0f0f0 !important;
-      color: #000 !important;
-      border-bottom: 2px solid #999 !important;
-      position: static !important;
-    }
-    tbody td { color: #000 !important; border-bottom: 1px solid #eee !important; position: static !important; }
+    .tablewrap { border: 1px solid #ccc !important; box-shadow: none !important; max-height: none !important; overflow: visible !important; background: #fff !important; }
+    table { font-size: 9px !important; }
+    thead th { background: #f0f0f0 !important; color: #000 !important; border-bottom: 2px solid #999 !important; position: static !important; box-shadow: none !important; }
+    tbody td { color: #000 !important; border-bottom: 1px solid #eee !important; position: static !important; box-shadow: none !important; }
     tbody td:first-child { position: static !important; background: transparent !important; }
     thead th:first-child { position: static !important; background: #f0f0f0 !important; }
     .pos { color: #0a7f3f !important; }
     .neg { color: #c00 !important; }
-    .cards { grid-template-columns: repeat(4, 1fr) !important; gap: 6px !important; }
-    .card { border: 1px solid #ccc !important; background: #fff !important; padding: 8px !important; }
-    .card .label { color: #666 !important; }
-    .card .value { color: #000 !important; font-size: 16px !important; }
+    .cards, .exchange-section { grid-template-columns: repeat(4, 1fr) !important; gap: 6px !important; }
+    .card, .exchange-box { border: 1px solid #ccc !important; background: #fff !important; padding: 8px !important; }
+    .card .label, .ex-cell .ex-label { color: #666 !important; }
+    .card .value, .ex-cell .ex-value { color: #000 !important; font-size: 16px !important; }
     .alerts-wrap { background: #fff !important; border: 1px solid #ccc !important; }
     .alert-item { background: #f9f9f9 !important; border-left: 3px solid #999 !important; }
     .alert-item .a-lot { background: #eee !important; color: #000 !important; }
     .alert-item .a-msg { color: #000 !important; }
     .alert-item .a-val { color: #333 !important; }
-    tfoot tr.totals-row td {
-      background: #e8e8e8 !important; color: #000 !important;
-      position: static !important; border-top: 2px solid #333 !important;
-    }
+    tfoot tr.totals-row td { background: #e8e8e8 !important; color: #000 !important; position: static !important; border-top: 2px solid #333 !important; }
     .metal-chip { background: #eee !important; color: #000 !important; border: 1px solid #ccc !important; }
     .badge { border: 1px solid #999 !important; background: #fff !important; color: #000 !important; }
     .status-danger td, .status-warn td { background: #fff !important; }
@@ -498,19 +316,20 @@
 </header>
 
 <div class="wrap">
+
   <div class="drop" id="drop">
     <div class="drop-icon">⇪</div>
-    <h3>Drop your Excel file</h3>
-    <p>or click to browse — reads sheet <b>Data Table</b></p>
+    <h3>Drop one or more Excel files</h3>
+    <p>or click to browse — you can select multiple files (e.g. Aluminium + Zinc)</p>
     <span class="hint">🔒 Processed locally — nothing is uploaded</span>
-    <input type="file" id="file" accept=".xlsx,.xls" hidden>
+    <input type="file" id="file" accept=".xlsx,.xls" multiple hidden>
   </div>
 
+  <div class="file-list" id="fileList"></div>
   <div id="log" class="log"></div>
 
   <div id="main" style="display:none">
 
-    <!-- ============ ALERTS PANEL (#14) ============ -->
     <div class="alerts-wrap" id="alertsWrap">
       <div class="alerts-hdr">
         <h3>🚨 Alerts <span class="count-badge" id="alertCount">0</span></h3>
@@ -525,13 +344,17 @@
       <div class="alerts-list" id="alertsList"></div>
     </div>
 
+    <div class="metal-picker" id="metalPicker" style="display:none">
+      <span class="mp-label">View:</span>
+      <div class="mp-buttons" id="metalButtons"></div>
+    </div>
+
     <div class="tabs">
       <button class="tab active" data-tab="physical">Physical</button>
       <button class="tab" data-tab="hedge">Hedges</button>
       <button class="tab" data-tab="dashboard">Dashboard</button>
     </div>
 
-    <!-- PHYSICAL -->
     <div class="tab-panel active" id="tab-physical">
       <div class="cards" id="cards-phys"></div>
       <div class="charts">
@@ -551,14 +374,13 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input id="searchPhys" placeholder="Search Lot ID / Metal / Status / Buyer / Seller…">
         </div>
-        <select id="fMetalPhys"><option value="">All Metals</option></select>
       </div>
       <div class="tablewrap"><table id="tblPhys"></table></div>
     </div>
 
-    <!-- HEDGE -->
     <div class="tab-panel" id="tab-hedge">
       <div class="cards" id="cards-hedge"></div>
+      <div class="exchange-section" id="exchangeBoxes"></div>
       <div class="charts">
         <div class="chart-card"><h3>PnL by Metal — Realized vs Open MTM</h3><div class="canvas-wrap"><canvas id="chartPnl"></canvas></div></div>
         <div class="chart-card"><h3>Position Split — Long vs Short</h3><div class="canvas-wrap"><canvas id="chartPosition"></canvas></div></div>
@@ -580,7 +402,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input id="searchHedge" placeholder="Search Lot ID / Metal / Exchange…">
         </div>
-        <select id="fMetalHedge"><option value="">All Metals</option></select>
         <select id="fRemark">
           <option value="">All Status</option>
           <option value="Hedge Active">Active only</option>
@@ -590,7 +411,6 @@
       <div class="tablewrap"><table id="tblHedge"></table></div>
     </div>
 
-    <!-- DASHBOARD -->
     <div class="tab-panel" id="tab-dashboard">
       <div class="cards" id="cards-dash"></div>
       <div class="charts">
@@ -610,7 +430,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input id="searchDash" placeholder="Search Lot ID / Metal / Instruction…">
         </div>
-        <select id="fMetalDash"><option value="">All Metals</option></select>
         <select id="fInstruction">
           <option value="">All Instructions</option>
           <option value="🚨 UNDER-HEDGED">Under-Hedged</option>
@@ -676,10 +495,7 @@ const sum = arr => arr.reduce((a, b) => a + (b || 0), 0);
 const escapeHtml = s => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-const daysBetween = (a, b) => {
-  if (!a || !b) return Infinity;
-  return Math.round((b - a) / 86400000);
-};
+const daysBetween = (a, b) => { if (!a || !b) return Infinity; return Math.round((b - a) / 86400000); };
 
 // ============ COLUMN DETECTION ============
 function detectColumns(header) {
@@ -696,28 +512,20 @@ function detectColumns(header) {
 
   let buysStart = -1;
   for (const c of allCat) {
-    if (header[c + 1] === 'LOT ID' && findAll('BUY QTY').some(i => i > c && i < c + 12)) {
-      buysStart = c; break;
-    }
+    if (header[c + 1] === 'LOT ID' && findAll('BUY QTY').some(i => i > c && i < c + 12)) { buysStart = c; break; }
   }
   let sellsStart = -1;
   for (const c of allCat) {
     if (c <= buysStart) continue;
-    if (header[c + 1] === 'LOT ID' && findAll('SOLD QTY').some(i => i > c && i < c + 12)) {
-      sellsStart = c; break;
-    }
+    if (header[c + 1] === 'LOT ID' && findAll('SOLD QTY').some(i => i > c && i < c + 12)) { sellsStart = c; break; }
   }
   let liveStart = -1;
   for (let i = 0; i < header.length - 2; i++) {
-    if (header[i] === 'METAL' && header[i + 1] === 'EXCHANGE' && header[i + 2] === 'PROMPT DATE') {
-      liveStart = i; break;
-    }
+    if (header[i] === 'METAL' && header[i + 1] === 'EXCHANGE' && header[i + 2] === 'PROMPT DATE') { liveStart = i; break; }
   }
   let etStart = -1;
   for (let i = 0; i < header.length - 3; i++) {
-    if (header[i] === 'DATE' && header[i + 1] === 'LOT ID' && header[i + 2] === 'EXCHANGE' && header[i + 3] === 'PROMPT DATE') {
-      etStart = i; break;
-    }
+    if (header[i] === 'DATE' && header[i + 1] === 'LOT ID' && header[i + 2] === 'EXCHANGE' && header[i + 3] === 'PROMPT DATE') { etStart = i; break; }
   }
 
   const pos = { buys: { start: buysStart }, sells: { start: sellsStart }, live: { start: liveStart }, hedge: { start: etStart } };
@@ -771,14 +579,11 @@ function readWorkbook(wb) {
 
   const header = (aoa[hdrRow] || []).map(x => norm(x));
   const pos = detectColumns(header);
-  console.log('Header:', header);
-  console.log('Positions:', pos);
-
   const dataRows = aoa.slice(hdrRow + 1);
   const buys = [], sells = [], live = [], hedge = [];
   const g = (row, i) => (i != null && i >= 0) ? row[i] : null;
 
-  dataRows.forEach((r, idx) => {
+  dataRows.forEach((r) => {
     if (!r) return;
     if (pos.buys.start >= 0) {
       const lot = g(r, pos.buys.lot);
@@ -854,7 +659,6 @@ function buildPhysical(buys, sells) {
     else if (QtyS === QtyB)      Status = 'CLOSED';
     else                         Status = 'Over-Sold';
 
-    // party names aggregated
     const buyerNames = [...new Set([b.party].filter(Boolean))];
     const sellersForLot = sells.filter(x => String(x.lot).trim() === lot).map(x => x.party).filter(Boolean);
     const sellerNames = [...new Set(sellersForLot)];
@@ -953,7 +757,6 @@ function buildHedge(hedge, live, buys) {
       };
     };
     const netTotal = g.reduce((s, x) => s + x.netV, 0);
-    // earliest trade date for date filter
     const tradeDates = g.map(x => x.tradeDate).filter(Boolean).sort((a,b) => a - b);
     return {
       lot, metal: metal || '—',
@@ -1009,11 +812,15 @@ function buildDashboard(physical, hedge) {
 }
 
 // ============ STATE ============
+let ALL_PHYS = [], ALL_HEDGE = [], ALL_DASH = [];
 let PHYS = [], HEDGE = [], DASH = [];
 let RAW_BUYS = [], RAW_SELLS = [], RAW_HEDGE = [], RAW_LIVE = [];
 let ALERTS = [];
-const alertToggles = { hedge: true, prompt: true, loss: true, naked: true, dncn: true };
+let loadedFiles = [];
+let currentMetalView = 'BOTH';
+let availableMetals = [];
 
+const alertToggles = { hedge: true, prompt: true, loss: true, naked: true, dncn: true };
 const sortState = {
   physical: { key: null, dir: 1 },
   hedge:    { key: null, dir: 1 },
@@ -1021,29 +828,92 @@ const sortState = {
 };
 
 const logEl = document.getElementById('log');
-const log = msg => { logEl.textContent = msg; console.log(msg); };
+const fileListEl = document.getElementById('fileList');
+let logBuf = '';
+const log = msg => { logBuf += (logBuf ? '\n' : '') + msg; logEl.textContent = logBuf; console.log(msg); };
+
 const fmt  = (n, d = 2) => (n == null || isNaN(n)) ? '—' : Number(n).toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
 const fmtD = d => d ? new Date(d).toISOString().slice(0, 10) : '—';
 const pnlClass = n => n > 0 ? 'pos' : n < 0 ? 'neg' : '';
 
-// ============ ALERTS (#14) ============
+// ============ METAL MATCHING ============
+function metalMatches(r, view) {
+  if (view === 'BOTH') return true;
+  const m = norm(r.metal);
+  if (view === 'ZINC') return m.includes('ZINC') || m === 'ZN' || m === 'ZNC';
+  if (view === 'ALUMINIUM') return m.includes('ALUM') || m === 'AL';
+  return true;
+}
+function filterByMetal(rows, view) {
+  if (view === 'BOTH') return rows;
+  return rows.filter(r => metalMatches(r, view));
+}
+
+// ============ METAL PICKER ============
+function renderMetalButtons() {
+  const picker = document.getElementById('metalPicker');
+  const wrap = document.getElementById('metalButtons');
+  picker.style.display = 'flex';
+
+  const counts = {
+    ALUMINIUM: ALL_PHYS.filter(r => metalMatches(r, 'ALUMINIUM')).length,
+    ZINC:      ALL_PHYS.filter(r => metalMatches(r, 'ZINC')).length,
+    BOTH:      ALL_PHYS.length,
+  };
+
+  const buttons = [
+    { key: 'ALUMINIUM', label: '🟦 Aluminium' },
+    { key: 'ZINC',      label: '🩶 Zinc' },
+    { key: 'BOTH',      label: '🔄 Both' },
+  ];
+
+  wrap.innerHTML = buttons.map(b => {
+    const disabled = b.key !== 'BOTH' && counts[b.key] === 0;
+    const active = currentMetalView === b.key ? 'active' : '';
+    const dis = disabled ? 'disabled' : '';
+    return `<button class="metal-btn ${active} ${dis}" data-metal="${b.key}" ${disabled ? 'disabled' : ''}>
+      ${b.label}<span class="count">${counts[b.key]}</span>
+    </button>`;
+  }).join('');
+
+  wrap.querySelectorAll('.metal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      currentMetalView = btn.dataset.metal;
+      applyMetalView();
+    });
+  });
+}
+
+function applyMetalView() {
+  PHYS  = filterByMetal(ALL_PHYS, currentMetalView);
+  HEDGE = filterByMetal(ALL_HEDGE, currentMetalView);
+  DASH  = filterByMetal(ALL_DASH, currentMetalView);
+
+  buildAlerts();
+  renderMetalButtons();
+
+  const label = currentMetalView === 'BOTH' ? 'All Metals' : currentMetalView;
+  log(`\n🔍 View: ${label} → Physical=${PHYS.length}, Hedge=${HEDGE.length}, Dashboard=${DASH.length}`);
+
+  renderPhysical();
+  renderHedge();
+  renderDash();
+}
+
+// ============ ALERTS ============
 function buildAlerts() {
   ALERTS = [];
   const today = new Date();
   today.setHours(0,0,0,0);
-
-  // Index hedge by lot
   const hedgeByLot = {};
   HEDGE.forEach(h => { hedgeByLot[h.lot] = h; });
 
   PHYS.forEach(p => {
     const h = hedgeByLot[p.lot] || null;
-
-    // 1. Hedge mismatch — physical direction and hedge net direction
     if (h) {
-      const physNet = p.physInStockQty; // positive = long physical
+      const physNet = p.physInStockQty;
       const hedgeNet = (h.lme.netQty || 0) + (h.mcx.netQty || 0);
-      // A hedge should be roughly opposite of physical long/short. Mismatch if same sign and both non-zero
       if (Math.abs(physNet) > 0.001 && Math.abs(hedgeNet) > 0.001) {
         if (Math.sign(physNet) === Math.sign(hedgeNet)) {
           ALERTS.push({
@@ -1055,21 +925,17 @@ function buildAlerts() {
         }
       }
     }
-
-    // 2. Naked exposure (physical in-stock + net hedge ≠ 0)
     if (h) {
       const naked = p.physInStockQty + (h.lme.netQty || 0) + (h.mcx.netQty || 0);
       if (Math.abs(naked) > 0.001) {
         ALERTS.push({
-          type: 'naked', severity: naked > 0 ? 'warn' : 'warn',
+          type: 'naked', severity: 'warn',
           lot: p.lot, metal: p.metal,
           msg: `Naked exposure ${naked > 0 ? 'under-hedged' : 'over-hedged'} by ${fmt(Math.abs(naked), 0)}`,
           val: `${naked}`,
         });
       }
     }
-
-    // 3. Big loss
     const totalPnL = p.physRealizedPnL + (h ? h.totalRealized : 0);
     if (totalPnL < -50000) {
       ALERTS.push({
@@ -1079,8 +945,6 @@ function buildAlerts() {
         val: fmt(totalPnL),
       });
     }
-
-    // 4. Near prompt date (within 3 days)
     if (h) {
       const prompt = h.mcx.prompt || h.lme.prompt;
       if (prompt) {
@@ -1095,8 +959,6 @@ function buildAlerts() {
         }
       }
     }
-
-    // 5. CN/DN note present (extract from Status string)
     if (p.physStatus && (p.physStatus.includes('CN_Amt') || p.physStatus.includes('DN_Amt'))) {
       const cnMatch = p.physStatus.match(/CN_Amt:\s*([\d.]+)/);
       const dnMatch = p.physStatus.match(/DN_Amt:\s*([\d.]+)/);
@@ -1108,7 +970,6 @@ function buildAlerts() {
       });
     }
   });
-
   renderAlerts();
 }
 
@@ -1116,8 +977,6 @@ function renderAlerts() {
   const list = document.getElementById('alertsList');
   const visible = ALERTS.filter(a => alertToggles[a.type]);
   const badge = document.getElementById('alertCount');
-  const dangerCount = visible.filter(a => a.severity === 'danger').length;
-
   badge.textContent = visible.length;
   badge.className = 'count-badge' + (visible.length === 0 ? ' ok' : '');
 
@@ -1125,11 +984,7 @@ function renderAlerts() {
     list.innerHTML = '<div class="alerts-empty">✅ No alerts — everything looks fine</div>';
     return;
   }
-
-  const icons = {
-    hedge: '⚠️', prompt: '⏰', loss: '📉', naked: '🚨', dncn: '📄'
-  };
-
+  const icons = { hedge: '⚠️', prompt: '⏰', loss: '📉', naked: '🚨', dncn: '📄' };
   list.innerHTML = visible.map(a => {
     const cls = a.severity === 'danger' ? '' : a.severity === 'warn' ? 'warn' : 'info';
     return `<div class="alert-item ${cls}" data-lot="${escapeHtml(a.lot)}">
@@ -1150,7 +1005,6 @@ document.querySelectorAll('.alert-toggle').forEach(btn => {
   });
 });
 
-// Click on alert opens the lot modal
 document.getElementById('alertsList').addEventListener('click', e => {
   const item = e.target.closest('.alert-item');
   if (!item) return;
@@ -1158,7 +1012,7 @@ document.getElementById('alertsList').addEventListener('click', e => {
   if (lot) openLotModal(lot);
 });
 
-// ============ SORTING (#3) ============
+// ============ SORTING ============
 function applySort(rows, tab, getters) {
   const s = sortState[tab];
   if (!s.key) return rows;
@@ -1171,7 +1025,6 @@ function applySort(rows, tab, getters) {
     return (va - vb) * s.dir;
   });
 }
-
 function toggleSort(tab, key) {
   const s = sortState[tab];
   if (s.key === key) s.dir = -s.dir;
@@ -1180,34 +1033,25 @@ function toggleSort(tab, key) {
   else if (tab === 'hedge') renderHedge();
   else renderDash();
 }
-
 function sortArrow(tab, key) {
   const s = sortState[tab];
   if (s.key !== key) return `<span class="sort-arrow idle">▼</span>`;
   return `<span class="sort-arrow">${s.dir === 1 ? '▲' : '▼'}</span>`;
 }
 
-// ============ STATUS COLOR RULES (#5) ============
+// ============ STATUS COLOR RULES ============
 function physStatusClass(r) {
-  // Danger: unpriced buy or over-sold
   if (r.physStatus.startsWith('Over-Sold')) return 'status-danger';
-  // Warning: partial stock or unsold
   if (r.physStatus.startsWith('Open Stock')) return 'status-warn';
-  // OK: closed
   if (r.physStatus.startsWith('CLOSED')) return 'status-ok';
   return '';
 }
-
 function hedgeStatusClass(r) {
-  // Danger: heavy loss
   if (r.totalRealized + r.totalMTM < -50000) return 'status-danger';
-  // Warning: active hedge
   if (r.remark === 'Hedge Active') return 'status-warn';
-  // OK: squared off
   if (r.remark === 'Hedge Squared Off') return 'status-ok';
   return '';
 }
-
 function dashStatusClass(r) {
   if (r.instruction.includes('UNDER') || r.instruction.includes('OVER')) return 'status-danger';
   if (r.instruction.includes('FULLY')) return 'status-ok';
@@ -1218,43 +1062,28 @@ function dashStatusClass(r) {
 // ============ RENDER: PHYSICAL ============
 function renderPhysical() {
   const q  = document.getElementById('searchPhys').value.toLowerCase();
-  const fm = document.getElementById('fMetalPhys').value;
   const from = document.getElementById('physDateFrom').value;
   const to   = document.getElementById('physDateTo').value;
 
   let filtered = PHYS.filter(r => {
-    if (fm && r.metal !== fm) return false;
-    if (from) {
-      const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : '';
-      if (!d || d < from) return false;
-    }
-    if (to) {
-      const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : '';
-      if (!d || d > to) return false;
-    }
+    if (from) { const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : ''; if (!d || d < from) return false; }
+    if (to)   { const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : ''; if (!d || d > to) return false; }
     if (q) {
-      const hay = (r.lot + ' ' + (r.metal||'') + ' ' + (r.physStatus||'') + ' ' +
-                   (r.buyerSearch||'') + ' ' + (r.sellerSearch||'')).toLowerCase();
+      const hay = (r.lot + ' ' + (r.metal||'') + ' ' + (r.physStatus||'') + ' ' + (r.buyerSearch||'') + ' ' + (r.sellerSearch||'')).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
   });
 
   filtered = applySort(filtered, 'physical', {
-    'lot': r => r.lot,
-    'metal': r => r.metal,
+    'lot': r => r.lot, 'metal': r => r.metal,
     'physBuyDate': r => r.physBuyDate?.getTime() || 0,
-    'physBuyQty': r => r.physBuyQty,
-    'physBuyPrice': r => r.physBuyPrice,
-    'physSellQty': r => r.physSellQty,
-    'physSellPrice': r => r.physSellPrice,
-    'physInStockQty': r => r.physInStockQty,
-    'physUnpricedQty': r => r.physUnpricedQty,
-    'physRealizedPnL': r => r.physRealizedPnL,
-    'physStatus': r => r.physStatus,
+    'physBuyQty': r => r.physBuyQty, 'physBuyPrice': r => r.physBuyPrice,
+    'physSellQty': r => r.physSellQty, 'physSellPrice': r => r.physSellPrice,
+    'physInStockQty': r => r.physInStockQty, 'physUnpricedQty': r => r.physUnpricedQty,
+    'physRealizedPnL': r => r.physRealizedPnL, 'physStatus': r => r.physStatus,
   });
 
-  // Cards
   const totalReal = sum(filtered.map(r => r.physRealizedPnL));
   const totalStock = sum(filtered.map(r => r.physInStockQty));
   const totalSold = sum(filtered.map(r => r.physSellQty));
@@ -1292,8 +1121,8 @@ function renderPhysical() {
     bodyHtml += `<tr class="row-clickable ${physStatusClass(r)}" data-lot="${escapeHtml(r.lot)}" data-tab="physical">`;
     cols.forEach(c => {
       const v = r[c.k];
-      if (c.chip) bodyHtml += `<td><span class="metal-chip">${v || '—'}</span></td>`;
-      else if (c.k === 'physStatus') bodyHtml += `<td style="text-align:left;font-size:11.5px;color:#a7b6d4">${v || '—'}</td>`;
+      if (c.chip) bodyHtml += `<td><span class="metal-chip" data-metal="${escapeHtml(norm(v))}">${v || '—'}</span></td>`;
+      else if (c.k === 'physStatus') bodyHtml += `<td style="text-align:left;font-size:11px;color:#a7b6d4">${v || '—'}</td>`;
       else {
         const f = c.fmt || (x => x);
         const cls = c.pnl ? pnlClass(v) : '';
@@ -1304,11 +1133,9 @@ function renderPhysical() {
   });
   bodyHtml += '</tbody>';
 
-  // Totals footer
   const totalRow = `<tfoot><tr class="totals-row">
     <td>Total (${filtered.length} lots)</td>
-    <td></td>
-    <td></td>
+    <td></td><td></td>
     <td>${fmt(totalBought, 0)}</td>
     <td></td>
     <td>${fmt(totalSold, 0)}</td>
@@ -1326,41 +1153,23 @@ function renderPhysical() {
 // ============ RENDER: HEDGE ============
 function renderHedge() {
   const q  = document.getElementById('searchHedge').value.toLowerCase();
-  const fm = document.getElementById('fMetalHedge').value;
   const fr = document.getElementById('fRemark').value;
   const from = document.getElementById('hedgeDateFrom').value;
   const to   = document.getElementById('hedgeDateTo').value;
 
   let filtered = HEDGE.filter(r => {
-    if (fm && r.metal !== fm) return false;
     if (fr && r.remark !== fr) return false;
-    if (from) {
-      const d = r.lastTradeDate ? r.lastTradeDate.toISOString().slice(0,10) : '';
-      if (!d || d < from) return false;
-    }
-    if (to) {
-      const d = r.lastTradeDate ? r.lastTradeDate.toISOString().slice(0,10) : '';
-      if (!d || d > to) return false;
-    }
-    if (q) {
-      const hay = (r.lot + ' ' + r.metal).toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
+    if (from) { const d = r.lastTradeDate ? r.lastTradeDate.toISOString().slice(0,10) : ''; if (!d || d < from) return false; }
+    if (to)   { const d = r.lastTradeDate ? r.lastTradeDate.toISOString().slice(0,10) : ''; if (!d || d > to) return false; }
+    if (q) { const hay = (r.lot + ' ' + r.metal).toLowerCase(); if (!hay.includes(q)) return false; }
     return true;
   });
 
   filtered = applySort(filtered, 'hedge', {
-    'lot': r => r.lot,
-    'metal': r => r.metal,
-    'lme.netQty': r => r.lme.netQty,
-    'lme.mtm': r => r.lme.mtm,
-    'lme.realized': r => r.lme.realized,
-    'mcx.netQty': r => r.mcx.netQty,
-    'mcx.mtm': r => r.mcx.mtm,
-    'mcx.realized': r => r.mcx.realized,
-    'totalRealized': r => r.totalRealized,
-    'totalMTM': r => r.totalMTM,
-    'remark': r => r.remark,
+    'lot': r => r.lot, 'metal': r => r.metal,
+    'lme.netQty': r => r.lme.netQty, 'lme.mtm': r => r.lme.mtm, 'lme.realized': r => r.lme.realized,
+    'mcx.netQty': r => r.mcx.netQty, 'mcx.mtm': r => r.mcx.mtm, 'mcx.realized': r => r.mcx.realized,
+    'totalRealized': r => r.totalRealized, 'totalMTM': r => r.totalMTM, 'remark': r => r.remark,
   });
 
   const totalReal = sum(filtered.map(r => r.totalRealized));
@@ -1369,53 +1178,44 @@ function renderHedge() {
   const squared   = filtered.filter(r => r.remark === 'Hedge Squared Off').length;
 
   document.getElementById('cards-hedge').innerHTML = `
-    <div class="card"><div class="label">Realized PnL</div><div class="value ${pnlClass(totalReal)}">${fmt(totalReal)}</div><div class="subval">Closed portion</div></div>
-    <div class="card"><div class="label">Open MTM</div><div class="value ${pnlClass(totalMTM)}">${fmt(totalMTM)}</div><div class="subval">Mark-to-market</div></div>
+    <div class="card"><div class="label">Total Realized PnL</div><div class="value ${pnlClass(totalReal)}">${fmt(totalReal)}</div><div class="subval">All exchanges</div></div>
+    <div class="card"><div class="label">Total Open MTM</div><div class="value ${pnlClass(totalMTM)}">${fmt(totalMTM)}</div><div class="subval">Mark-to-market</div></div>
     <div class="card"><div class="label">Active Hedges</div><div class="value">${active}</div><div class="subval">Open positions</div></div>
     <div class="card"><div class="label">Squared Off</div><div class="value">${squared}</div><div class="subval">Fully closed lots</div></div>
     <div class="card"><div class="label">Lots Shown</div><div class="value">${filtered.length}</div><div class="subval">of ${HEDGE.length} total</div></div>
   `;
 
+  renderExchangeBoxes(filtered);
+
   const cols = [
     { k: 'lot', label: 'Lot ID' },
     { k: 'metal', label: 'Metal', chip: true },
-    { group: 'LME', cls: 'lme-g' },
-    { k: 'lme.prompt', label: 'Prompt', fmt: fmtD },
-    { k: 'lme.buyQty', label: 'Buy', fmt: x => fmt(x, 0) },
-    { k: 'lme.avgBuyP', label: 'Avg Buy', fmt },
-    { k: 'lme.sellQty', label: 'Sell', fmt: x => fmt(x, 0) },
-    { k: 'lme.avgSellP', label: 'Avg Sell', fmt },
-    { k: 'lme.settle', label: 'Settle', fmt },
-    { k: 'lme.netQty', label: 'Net', fmt: x => fmt(x, 0) },
-    { k: 'lme.mtm', label: 'MTM', fmt, pnl: true },
-    { k: 'lme.realized', label: 'Realized', fmt, pnl: true },
-    { group: 'MCX', cls: 'mcx-g' },
-    { k: 'mcx.prompt', label: 'Prompt', fmt: fmtD },
-    { k: 'mcx.buyQty', label: 'Buy', fmt: x => fmt(x, 0) },
-    { k: 'mcx.avgBuyP', label: 'Avg Buy', fmt },
-    { k: 'mcx.sellQty', label: 'Sell', fmt: x => fmt(x, 0) },
-    { k: 'mcx.avgSellP', label: 'Avg Sell', fmt },
-    { k: 'mcx.settle', label: 'Settle', fmt },
-    { k: 'mcx.netQty', label: 'Net', fmt: x => fmt(x, 0) },
-    { k: 'mcx.mtm', label: 'MTM', fmt, pnl: true },
-    { k: 'mcx.realized', label: 'Realized', fmt, pnl: true },
+    { k: 'lme.prompt', label: 'L Prompt', fmt: fmtD },
+    { k: 'lme.buyQty', label: 'L Buy', fmt: x => fmt(x, 0) },
+    { k: 'lme.avgBuyP', label: 'L AvgBuy', fmt },
+    { k: 'lme.sellQty', label: 'L Sell', fmt: x => fmt(x, 0) },
+    { k: 'lme.avgSellP', label: 'L AvgSell', fmt },
+    { k: 'lme.settle', label: 'L Settle', fmt },
+    { k: 'lme.netQty', label: 'L Net', fmt: x => fmt(x, 0) },
+    { k: 'lme.mtm', label: 'L MTM', fmt, pnl: true },
+    { k: 'lme.realized', label: 'L Realized', fmt, pnl: true },
+    { k: 'mcx.prompt', label: 'M Prompt', fmt: fmtD },
+    { k: 'mcx.buyQty', label: 'M Buy', fmt: x => fmt(x, 0) },
+    { k: 'mcx.avgBuyP', label: 'M AvgBuy', fmt },
+    { k: 'mcx.sellQty', label: 'M Sell', fmt: x => fmt(x, 0) },
+    { k: 'mcx.avgSellP', label: 'M AvgSell', fmt },
+    { k: 'mcx.settle', label: 'M Settle', fmt },
+    { k: 'mcx.netQty', label: 'M Net', fmt: x => fmt(x, 0) },
+    { k: 'mcx.mtm', label: 'M MTM', fmt, pnl: true },
+    { k: 'mcx.realized', label: 'M Realized', fmt, pnl: true },
     { k: 'totalRealized', label: 'Total Realized', fmt, pnl: true },
     { k: 'remark', label: 'Status', badge: true },
   ];
   const get = (o, p) => p.split('.').reduce((a, k) => a?.[k], o);
 
-  let headHtml = '<thead><tr class="group">';
-  headHtml += '<th colspan="2"></th>';
-  headHtml += '<th colspan="10" class="lme-g">LME</th>';
-  headHtml += '<th colspan="10" class="mcx-g">MCX</th>';
-  headHtml += '<th colspan="2"></th>';
-  headHtml += '</tr><tr>';
+  let headHtml = '<thead><tr>';
   cols.forEach(c => {
-    if (c.group) {
-      headHtml += `<th>${c.group}</th>`;
-    } else {
-      headHtml += `<th class="sortable" data-sort-tab="hedge" data-sort-key="${c.k}">${c.label}${sortArrow('hedge', c.k)}</th>`;
-    }
+    headHtml += `<th class="sortable" data-sort-tab="hedge" data-sort-key="${c.k}">${c.label}${sortArrow('hedge', c.k)}</th>`;
   });
   headHtml += '</tr></thead>';
 
@@ -1423,9 +1223,8 @@ function renderHedge() {
   filtered.forEach(r => {
     bodyHtml += `<tr class="row-clickable ${hedgeStatusClass(r)}" data-lot="${escapeHtml(r.lot)}" data-tab="hedge">`;
     cols.forEach(c => {
-      if (c.group) return;
       const v = get(r, c.k);
-      if (c.chip) bodyHtml += `<td><span class="metal-chip">${v}</span></td>`;
+      if (c.chip) bodyHtml += `<td><span class="metal-chip" data-metal="${escapeHtml(norm(v))}">${v}</span></td>`;
       else if (c.badge) {
         const cls = v === 'Hedge Active' ? 'active' : 'sq';
         bodyHtml += `<td><span class="badge ${cls}">${v}</span></td>`;
@@ -1447,7 +1246,6 @@ function renderHedge() {
     <td>Total (${filtered.length})</td>
     <td></td>
     <td></td><td></td><td></td><td></td><td></td><td></td>
-    <td></td>
     <td class="${pnlClass(lmeRealTotal)}">${fmt(lmeRealTotal)}</td>
     <td class="${pnlClass(lmeMtmTotal)}">${fmt(lmeMtmTotal)}</td>
     <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
@@ -1461,47 +1259,124 @@ function renderHedge() {
   renderHedgeCharts(filtered);
 }
 
+// ============ EXCHANGE SUMMARY BOXES ============
+function renderExchangeBoxes(filtered) {
+  const boxWrap = document.getElementById('exchangeBoxes');
+
+  const lme = {
+    realized: sum(filtered.map(r => r.lme.realized)),
+    mtm:      sum(filtered.map(r => r.lme.mtm)),
+    buyQty:   sum(filtered.map(r => r.lme.buyQty)),
+    sellQty:  sum(filtered.map(r => r.lme.sellQty)),
+    netQty:   sum(filtered.map(r => r.lme.netQty)),
+  };
+  const mcx = {
+    realized: sum(filtered.map(r => r.mcx.realized)),
+    mtm:      sum(filtered.map(r => r.mcx.mtm)),
+    buyQty:   sum(filtered.map(r => r.mcx.buyQty)),
+    sellQty:  sum(filtered.map(r => r.mcx.sellQty)),
+    netQty:   sum(filtered.map(r => r.mcx.netQty)),
+  };
+
+  const totalPnl = lme.realized + lme.mtm + mcx.realized + mcx.mtm;
+
+  boxWrap.innerHTML = `
+    <div class="exchange-box lme">
+      <h3>LME — Hedges</h3>
+      <div class="ex-grid">
+        <div class="ex-cell">
+          <div class="ex-label">Realized PnL</div>
+          <div class="ex-value ${pnlClass(lme.realized)}">${fmt(lme.realized)}</div>
+        </div>
+        <div class="ex-cell">
+          <div class="ex-label">Open MTM</div>
+          <div class="ex-value ${pnlClass(lme.mtm)}">${fmt(lme.mtm)}</div>
+        </div>
+        <div class="ex-cell">
+          <div class="ex-label">Total PnL</div>
+          <div class="ex-value ${pnlClass(lme.realized + lme.mtm)}">${fmt(lme.realized + lme.mtm)}</div>
+        </div>
+        <div class="ex-cell">
+          <div class="ex-label">Buy Qty</div>
+          <div class="ex-value">${fmt(lme.buyQty, 0)}</div>
+        </div>
+        <div class="ex-cell">
+          <div class="ex-label">Sell Qty</div>
+          <div class="ex-value">${fmt(lme.sellQty, 0)}</div>
+        </div>
+        <div class="ex-cell wide">
+          <div class="ex-label">Net Position</div>
+          <div class="ex-value ${pnlClass(lme.netQty)}">${fmt(lme.netQty, 0)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-box mcx">
+      <h3>MCX — Hedges</h3>
+      <div class="ex-grid">
+        <div class="ex-cell">
+          <div class="ex-label">Realized PnL</div>
+          <div class="ex-value ${pnlClass(mcx.realized)}">${fmt(mcx.realized)}</div>
+        </div>
+        <div class="ex-cell">
+          <div class="ex-label">Open MTM</div>
+          <div class="ex-value ${pnlClass(mcx.mtm)}">${fmt(mcx.mtm)}</div>
+        </div>
+        <div class="ex-cell">
+          <div class="ex-label">Total PnL</div>
+          <div class="ex-value ${pnlClass(mcx.realized + mcx.mtm)}">${fmt(mcx.realized + mcx.mtm)}</div>
+        </div>
+        <div class="ex-cell">
+          <div class="ex-label">Buy Qty</div>
+          <div class="ex-value">${fmt(mcx.buyQty, 0)}</div>
+        </div>
+        <div class="ex-cell">
+          <div class="ex-label">Sell Qty</div>
+          <div class="ex-value">${fmt(mcx.sellQty, 0)}</div>
+        </div>
+        <div class="ex-cell wide">
+          <div class="ex-label">Net Position</div>
+          <div class="ex-value ${pnlClass(mcx.netQty)}">${fmt(mcx.netQty, 0)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exchange-box" style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px;">
+      <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; font-weight: 600;">
+        Combined Hedge PnL (LME + MCX)
+      </div>
+      <div style="font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums;" class="${pnlClass(totalPnl)}">
+        ${fmt(totalPnl)}
+      </div>
+    </div>
+  `;
+}
+
 // ============ RENDER: DASHBOARD ============
 function renderDash() {
   const q  = document.getElementById('searchDash').value.toLowerCase();
-  const fm = document.getElementById('fMetalDash').value;
   const fi = document.getElementById('fInstruction').value;
   const from = document.getElementById('dashDateFrom').value;
   const to   = document.getElementById('dashDateTo').value;
 
   let filtered = DASH.filter(r => {
-    if (fm && r.metal !== fm) return false;
     if (fi && r.instruction !== fi) return false;
-    if (from) {
-      const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : '';
-      if (!d || d < from) return false;
-    }
-    if (to) {
-      const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : '';
-      if (!d || d > to) return false;
-    }
+    if (from) { const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : ''; if (!d || d < from) return false; }
+    if (to)   { const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : ''; if (!d || d > to) return false; }
     if (q) {
-      const hay = (r.lot + ' ' + (r.metal||'') + ' ' + (r.instruction||'') + ' ' +
-                   (r.buyerSearch||'') + ' ' + (r.sellerSearch||'')).toLowerCase();
+      const hay = (r.lot + ' ' + (r.metal||'') + ' ' + (r.instruction||'') + ' ' + (r.buyerSearch||'') + ' ' + (r.sellerSearch||'')).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
   });
 
   filtered = applySort(filtered, 'dashboard', {
-    'lot': r => r.lot,
-    'metal': r => r.metal,
+    'lot': r => r.lot, 'metal': r => r.metal,
     'physRealizedPnL': r => r.physRealizedPnL,
-    'lmeNetQty': r => r.lmeNetQty,
-    'lmeMTM': r => r.lmeMTM,
-    'lmeRealized': r => r.lmeRealized,
-    'mcxNetQty': r => r.mcxNetQty,
-    'mcxMTM': r => r.mcxMTM,
-    'mcxRealized': r => r.mcxRealized,
-    'nakedExposure': r => r.nakedExposure,
-    'totalHedgeMTM': r => r.totalHedgeMTM,
-    'totalNetRealizedPnL': r => r.totalNetRealizedPnL,
-    'instruction': r => r.instruction,
+    'lmeNetQty': r => r.lmeNetQty, 'lmeMTM': r => r.lmeMTM, 'lmeRealized': r => r.lmeRealized,
+    'mcxNetQty': r => r.mcxNetQty, 'mcxMTM': r => r.mcxMTM, 'mcxRealized': r => r.mcxRealized,
+    'nakedExposure': r => r.nakedExposure, 'totalHedgeMTM': r => r.totalHedgeMTM,
+    'totalNetRealizedPnL': r => r.totalNetRealizedPnL, 'instruction': r => r.instruction,
   });
 
   const totalNetReal = sum(filtered.map(r => r.totalNetRealizedPnL));
@@ -1523,25 +1398,21 @@ function renderDash() {
   const cols = [
     { k: 'lot', label: 'Lot ID' },
     { k: 'metal', label: 'Metal', chip: true },
-    { group: 'PHYSICAL', cls: 'phys-g' },
     { k: 'physBuyDate', label: 'Buy Date', fmt: fmtD },
     { k: 'physBuyQty', label: 'Buy Qty', fmt: x => fmt(x, 0) },
     { k: 'physBuyPrice', label: 'Buy Price', fmt },
     { k: 'physSellQty', label: 'Sold Qty', fmt: x => fmt(x, 0) },
     { k: 'physSellPrice', label: 'Sell Price', fmt },
     { k: 'physInStockQty', label: 'In Stock', fmt: x => fmt(x, 0) },
-    { k: 'physRealizedPnL', label: 'Phys Realized', fmt, pnl: true },
-    { group: 'HEDGE — LME', cls: 'lme-g' },
-    { k: 'lmePrompt', label: 'Prompt', fmt: fmtD },
-    { k: 'lmeNetQty', label: 'Net', fmt: x => fmt(x, 0) },
-    { k: 'lmeMTM', label: 'MTM', fmt, pnl: true },
-    { k: 'lmeRealized', label: 'Realized', fmt, pnl: true },
-    { group: 'HEDGE — MCX', cls: 'mcx-g' },
-    { k: 'mcxPrompt', label: 'Prompt', fmt: fmtD },
-    { k: 'mcxNetQty', label: 'Net', fmt: x => fmt(x, 0) },
-    { k: 'mcxMTM', label: 'MTM', fmt, pnl: true },
-    { k: 'mcxRealized', label: 'Realized', fmt, pnl: true },
-    { group: 'NET', cls: 'dash-g' },
+    { k: 'physRealizedPnL', label: 'Phys Real', fmt, pnl: true },
+    { k: 'lmePrompt', label: 'L Prompt', fmt: fmtD },
+    { k: 'lmeNetQty', label: 'L Net', fmt: x => fmt(x, 0) },
+    { k: 'lmeMTM', label: 'L MTM', fmt, pnl: true },
+    { k: 'lmeRealized', label: 'L Realized', fmt, pnl: true },
+    { k: 'mcxPrompt', label: 'M Prompt', fmt: fmtD },
+    { k: 'mcxNetQty', label: 'M Net', fmt: x => fmt(x, 0) },
+    { k: 'mcxMTM', label: 'M MTM', fmt, pnl: true },
+    { k: 'mcxRealized', label: 'M Realized', fmt, pnl: true },
     { k: 'nakedExposure', label: 'Naked Qty', fmt: x => fmt(x, 0), pnl: true },
     { k: 'totalHedgeMTM', label: 'Total MTM', fmt, pnl: true },
     { k: 'totalNetRealizedPnL', label: 'Net Realized', fmt, pnl: true },
@@ -1549,24 +1420,9 @@ function renderDash() {
   ];
   const get = (o, p) => p.split('.').reduce((a, k) => a?.[k], o);
 
-  let headHtml = '<thead><tr class="group">';
-  let i = 0;
-  while (i < cols.length) {
-    const c = cols[i];
-    if (c.group) {
-      let span = 0; let j = i + 1;
-      while (j < cols.length && !cols[j].group) { span++; j++; }
-      headHtml += `<th colspan="${span}" class="${c.cls}">${c.group}</th>`;
-      i = j;
-    } else { headHtml += `<th></th>`; i++; }
-  }
-  headHtml += '</tr><tr>';
+  let headHtml = '<thead><tr>';
   cols.forEach(c => {
-    if (c.group) {
-      headHtml += `<th>${c.group}</th>`;
-    } else {
-      headHtml += `<th class="sortable" data-sort-tab="dashboard" data-sort-key="${c.k}">${c.label}${sortArrow('dashboard', c.k)}</th>`;
-    }
+    headHtml += `<th class="sortable" data-sort-tab="dashboard" data-sort-key="${c.k}">${c.label}${sortArrow('dashboard', c.k)}</th>`;
   });
   headHtml += '</tr></thead>';
 
@@ -1574,9 +1430,8 @@ function renderDash() {
   filtered.forEach(r => {
     bodyHtml += `<tr class="row-clickable ${dashStatusClass(r)}" data-lot="${escapeHtml(r.lot)}" data-tab="dashboard">`;
     cols.forEach(c => {
-      if (c.group) return;
       const v = get(r, c.k);
-      if (c.chip) bodyHtml += `<td><span class="metal-chip">${v||'—'}</span></td>`;
+      if (c.chip) bodyHtml += `<td><span class="metal-chip" data-metal="${escapeHtml(norm(v))}">${v||'—'}</span></td>`;
       else if (c.badge) {
         let cls = 'b-info';
         if (v.includes('UNDER') || v.includes('OVER')) cls = 'b-danger';
@@ -1600,16 +1455,13 @@ function renderDash() {
     <td>${fmt(sum(filtered.map(r=>r.physInStockQty)), 0)}</td>
     <td class="${pnlClass(sum(filtered.map(r=>r.physRealizedPnL)))}">${fmt(sum(filtered.map(r=>r.physRealizedPnL)))}</td>
     <td></td>
-    <td></td>
     <td>${fmt(sum(filtered.map(r=>r.lmeNetQty)), 0)}</td>
     <td class="${pnlClass(sum(filtered.map(r=>r.lmeMTM)))}">${fmt(sum(filtered.map(r=>r.lmeMTM)))}</td>
     <td class="${pnlClass(sum(filtered.map(r=>r.lmeRealized)))}">${fmt(sum(filtered.map(r=>r.lmeRealized)))}</td>
     <td></td>
-    <td></td>
     <td>${fmt(sum(filtered.map(r=>r.mcxNetQty)), 0)}</td>
     <td class="${pnlClass(sum(filtered.map(r=>r.mcxMTM)))}">${fmt(sum(filtered.map(r=>r.mcxMTM)))}</td>
     <td class="${pnlClass(sum(filtered.map(r=>r.mcxRealized)))}">${fmt(sum(filtered.map(r=>r.mcxRealized)))}</td>
-    <td></td>
     <td class="${pnlClass(totalNaked)}">${fmt(totalNaked, 0)}</td>
     <td class="${pnlClass(totalHedgeMTM)}">${fmt(totalHedgeMTM)}</td>
     <td class="${pnlClass(totalNetReal)}">${fmt(totalNetReal)}</td>
@@ -1661,13 +1513,13 @@ function openLotModal(lotId) {
 
   html += `<div class="modal-section"><h3>Buy Transactions <span class="count">${buys.length}</span></h3>`;
   html += `<table class="tx-table"><thead><tr>
-    <th>Date</th><th>Buyer (CAT)</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Value</th>
+    <th class="date">Date</th><th class="party">Buyer (CAT)</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Value</th>
   </tr></thead><tbody>`;
   if (buys.length === 0) html += `<tr><td colspan="5" class="empty">No buy transactions</td></tr>`;
   buys.forEach(b => {
     html += `<tr>
-      <td>${escapeHtml(fmtD(b.date))}</td>
-      <td>${escapeHtml(b.party || '—')}</td>
+      <td class="date">${escapeHtml(fmtD(b.date))}</td>
+      <td class="party">${escapeHtml(b.party || '—')}</td>
       <td class="num">${fmt(nz(b.qty), 0)}</td>
       <td class="num">${fmt(nz(b.price))}</td>
       <td class="num">${fmt(nz(b.qty) * nz(b.price))}</td>
@@ -1677,13 +1529,13 @@ function openLotModal(lotId) {
 
   html += `<div class="modal-section"><h3>Sell Transactions <span class="count">${sells.length}</span></h3>`;
   html += `<table class="tx-table"><thead><tr>
-    <th>Date</th><th>Seller (CAT)</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Value</th>
+    <th class="date">Date</th><th class="party">Seller (CAT)</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Value</th>
   </tr></thead><tbody>`;
   if (sells.length === 0) html += `<tr><td colspan="5" class="empty">No sell transactions</td></tr>`;
   sells.forEach(s => {
     html += `<tr>
-      <td>${escapeHtml(fmtD(s.date))}</td>
-      <td>${escapeHtml(s.party || '—')}</td>
+      <td class="date">${escapeHtml(fmtD(s.date))}</td>
+      <td class="party">${escapeHtml(s.party || '—')}</td>
       <td class="num">${fmt(nz(s.qty), 0)}</td>
       <td class="num">${fmt(nz(s.price))}</td>
       <td class="num">${fmt(nz(s.qty) * nz(s.price))}</td>
@@ -1693,7 +1545,7 @@ function openLotModal(lotId) {
 
   html += `<div class="modal-section"><h3>Hedge Transactions <span class="count">${hedges.length}</span></h3>`;
   html += `<table class="tx-table"><thead><tr>
-    <th>Trade Date</th><th>Exchange</th><th>Action</th><th>Prompt Date</th>
+    <th class="date">Trade Date</th><th class="party">Exchange</th><th class="party">Action</th><th class="date">Prompt Date</th>
     <th class="num">Qty</th><th class="num">Final Price</th><th class="num">FX Rate</th><th class="num">Value</th>
   </tr></thead><tbody>`;
   if (hedges.length === 0) html += `<tr><td colspan="8" class="empty">No hedge transactions</td></tr>`;
@@ -1702,10 +1554,10 @@ function openLotModal(lotId) {
     const actCls = act === 'BUY' ? 'b-buy' : act === 'SELL' ? 'b-sell' : 'b-info';
     const value = nz(h.qty) * nz(h.finalPrice) * (norm(h.exchange) === 'LME' ? (nz(h.fxRate) || 1) : 1);
     html += `<tr>
-      <td>${escapeHtml(fmtD(h.date))}</td>
-      <td>${escapeHtml(norm(h.exchange) || '—')}</td>
-      <td><span class="badge ${actCls}">${escapeHtml(act)}</span></td>
-      <td>${escapeHtml(fmtD(h.prompt))}</td>
+      <td class="date">${escapeHtml(fmtD(h.date))}</td>
+      <td class="party">${escapeHtml(norm(h.exchange) || '—')}</td>
+      <td class="party"><span class="badge ${actCls}">${escapeHtml(act)}</span></td>
+      <td class="date">${escapeHtml(fmtD(h.prompt))}</td>
       <td class="num">${fmt(nz(h.qty), 0)}</td>
       <td class="num">${fmt(nz(h.finalPrice))}</td>
       <td class="num">${h.fxRate ? fmt(nz(h.fxRate)) : '—'}</td>
@@ -1719,13 +1571,8 @@ function openLotModal(lotId) {
 }
 
 document.addEventListener('click', e => {
-  // Sort toggle
   const th = e.target.closest('th.sortable');
-  if (th) {
-    toggleSort(th.dataset.sortTab, th.dataset.sortKey);
-    return;
-  }
-  // Row drilldown
+  if (th) { toggleSort(th.dataset.sortTab, th.dataset.sortKey); return; }
   const tr = e.target.closest('tr.row-clickable');
   if (!tr) return;
   const lot = tr.dataset.lot;
@@ -1737,7 +1584,7 @@ let charts = {};
 Chart.defaults.color = '#8a9ab8';
 Chart.defaults.font.family = "'Inter', sans-serif";
 Chart.defaults.font.size = 11;
-const COLORS = { accent: '#4f8cff', pos: '#34d399', neg: '#f87171', warn: '#fbbf24', lme: '#7fb0ff', mcx: '#f0a35a', purple: '#c4b5fd', grid: 'rgba(255,255,255,0.06)' };
+const COLORS = { accent: '#4f8cff', pos: '#34d399', neg: '#f87171', warn: '#fbbf24', lme: '#7fb0ff', mcx: '#f0a35a', purple: '#c4b5fd', grid: 'rgba(255,255,255,0.06)', zinc: '#a8a8a8' };
 
 function fmtCompact(n) {
   const abs = Math.abs(n);
@@ -1745,6 +1592,11 @@ function fmtCompact(n) {
   if (abs >= 1e5) return (n / 1e5).toFixed(2) + 'L';
   if (abs >= 1e3) return (n / 1e3).toFixed(1) + 'k';
   return n.toFixed(0);
+}
+function metalColor(m) {
+  const mm = norm(m);
+  if (mm === 'ZINC' || mm === 'ZN') return COLORS.zinc;
+  return COLORS.accent;
 }
 
 function renderPhysicalCharts(data) {
@@ -1770,7 +1622,6 @@ function renderPhysicalCharts(data) {
 
   const top = [...data].map(r => ({ lot: r.lot, pnl: r.physRealizedPnL }))
     .sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 10);
-
   if (charts.physTop) charts.physTop.destroy();
   charts.physTop = new Chart(document.getElementById('chartPhysTop'), {
     type: 'bar',
@@ -1782,20 +1633,18 @@ function renderPhysicalCharts(data) {
   });
 
   const metals = [...new Set(data.map(r => r.metal))].filter(Boolean).sort();
-  const stockByMetal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.physInStockQty)));
-
+  const stockByMetal = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.physInStockQty)));
   if (charts.physStock) charts.physStock.destroy();
   charts.physStock = new Chart(document.getElementById('chartPhysStock'), {
     type: 'bar',
-    data: { labels: metals, datasets: [{ label: 'In Stock', data: stockByMetal, backgroundColor: COLORS.accent, borderRadius: 6, maxBarThickness: 40 }] },
+    data: { labels: metals, datasets: [{ label: 'In Stock', data: stockByMetal, backgroundColor: metals.map(metalColor), borderRadius: 6, maxBarThickness: 40 }] },
     options: { responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
   });
 
-  const buyByMetal  = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.physBuyQty)));
-  const sellByMetal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.physSellQty)));
-
+  const buyByMetal  = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.physBuyQty)));
+  const sellByMetal = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.physSellQty)));
   if (charts.physFlow) charts.physFlow.destroy();
   charts.physFlow = new Chart(document.getElementById('chartPhysFlow'), {
     type: 'bar',
@@ -1813,8 +1662,8 @@ function renderPhysicalCharts(data) {
 
 function renderHedgeCharts(data) {
   const metals = [...new Set(data.map(r => r.metal))].filter(m => m && m !== '—').sort();
-  const pnlReal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.totalRealized)));
-  const pnlMTM  = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.totalMTM)));
+  const pnlReal = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.totalRealized)));
+  const pnlMTM  = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.totalMTM)));
 
   if (charts.pnl) charts.pnl.destroy();
   charts.pnl = new Chart(document.getElementById('chartPnl'), {
@@ -1828,8 +1677,8 @@ function renderHedgeCharts(data) {
       scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
   });
 
-  const lmeReal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.lme.realized)));
-  const lmeMTM  = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.lme.mtm)));
+  const lmeReal = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.lme.realized)));
+  const lmeMTM  = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.lme.mtm)));
   if (charts.lmePnl) charts.lmePnl.destroy();
   charts.lmePnl = new Chart(document.getElementById('chartLmePnl'), {
     type: 'bar',
@@ -1842,8 +1691,8 @@ function renderHedgeCharts(data) {
       scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
   });
 
-  const mcxReal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.mcx.realized)));
-  const mcxMTM  = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.mcx.mtm)));
+  const mcxReal = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.mcx.realized)));
+  const mcxMTM  = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.mcx.mtm)));
   if (charts.mcxPnl) charts.mcxPnl.destroy();
   charts.mcxPnl = new Chart(document.getElementById('chartMcxPnl'), {
     type: 'bar',
@@ -1856,7 +1705,7 @@ function renderHedgeCharts(data) {
       scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
   });
 
-  const lmeNet = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.lme.netQty)));
+  const lmeNet = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.lme.netQty)));
   if (charts.lmeNet) charts.lmeNet.destroy();
   charts.lmeNet = new Chart(document.getElementById('chartLmeNet'), {
     type: 'bar',
@@ -1868,7 +1717,7 @@ function renderHedgeCharts(data) {
       scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
   });
 
-  const mcxNet = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.mcx.netQty)));
+  const mcxNet = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.mcx.netQty)));
   if (charts.mcxNet) charts.mcxNet.destroy();
   charts.mcxNet = new Chart(document.getElementById('chartMcxNet'), {
     type: 'bar',
@@ -1903,8 +1752,8 @@ function renderHedgeCharts(data) {
       scales: { x: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } }, y: { grid: { display: false } } } },
   });
 
-  const lmeExposure = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.lme.netQty)));
-  const mcxExposure = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.mcx.netQty)));
+  const lmeExposure = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.lme.netQty)));
+  const mcxExposure = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.mcx.netQty)));
   if (charts.exposure) charts.exposure.destroy();
   charts.exposure = new Chart(document.getElementById('chartExposure'), {
     type: 'bar',
@@ -1956,7 +1805,7 @@ function renderDashCharts(data) {
   });
 
   const metals = [...new Set(data.map(r => r.metal))].filter(Boolean).sort();
-  const nakedByMetal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.nakedExposure)));
+  const nakedByMetal = metals.map(m => sum(data.filter(r => norm(r.metal) === norm(m)).map(r => r.nakedExposure)));
 
   if (charts.naked) charts.naked.destroy();
   charts.naked = new Chart(document.getElementById('chartNaked'), {
@@ -1970,7 +1819,6 @@ function renderDashCharts(data) {
 
   const top = [...data].map(r => ({ lot: r.lot, pnl: r.totalNetRealizedPnL }))
     .sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 10);
-
   if (charts.dashTop) charts.dashTop.destroy();
   charts.dashTop = new Chart(document.getElementById('chartDashTop'), {
     type: 'bar',
@@ -1994,85 +1842,146 @@ document.querySelectorAll('.tab').forEach(tab => {
 
 // ============ FILE LOADING ============
 document.getElementById('drop').addEventListener('click', () => document.getElementById('file').click());
-document.getElementById('file').addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+document.getElementById('file').addEventListener('change', e => {
+  if (e.target.files.length) handleFiles(Array.from(e.target.files));
+  e.target.value = '';
+});
+
 const drop = document.getElementById('drop');
 ['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
 ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
-drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) loadFile(f); });
+drop.addEventListener('drop', e => {
+  const files = Array.from(e.dataTransfer.files || []).filter(f => /\.(xlsx|xls)$/i.test(f.name));
+  if (files.length) handleFiles(files);
+});
 
-function populateFilter(selectId, values, label = 'Metals') {
-  const el = document.getElementById(selectId);
-  const current = el.value;
-  el.innerHTML = '<option value="">All ' + label + '</option>' + values.map(v => `<option>${v}</option>`).join('');
-  el.value = current;
+function renderFileList() {
+  fileListEl.innerHTML = loadedFiles.map((f, i) => {
+    const cls = f.error ? 'file-chip err' : 'file-chip';
+    const label = f.error
+      ? `${escapeHtml(f.name)} — ❌ ${escapeHtml(f.error)}`
+      : `${escapeHtml(f.name)} — ${f.buys.length}b, ${f.sells.length}s, ${f.hedge.length}h`;
+    return `<span class="${cls}">${label}<span class="x" data-idx="${i}" title="Remove">×</span></span>`;
+  }).join('');
 }
 
-function loadFile(file) {
-  log('Reading ' + file.name + ' (' + file.size + ' bytes)…');
-  const reader = new FileReader();
-  reader.onerror = () => log('❌ FileReader error: ' + reader.error);
-  reader.onload = e => {
-    try {
-      const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
-      const parsed = readWorkbook(wb);
+fileListEl.addEventListener('click', e => {
+  const x = e.target.closest('.x');
+  if (!x) return;
+  const idx = Number(x.dataset.idx);
+  loadedFiles.splice(idx, 1);
+  renderFileList();
+  rebuildFromLoadedFiles();
+});
 
-      RAW_BUYS  = parsed.buys;
-      RAW_SELLS = parsed.sells;
-      RAW_HEDGE = parsed.hedge;
-      RAW_LIVE  = parsed.live;
+function handleFiles(files) {
+  let remaining = files.length;
+  logBuf = '';
+  loadedFiles = [];
+  renderFileList();
 
-      PHYS  = buildPhysical(parsed.buys, parsed.sells);
-      HEDGE = buildHedge(parsed.hedge, parsed.live, parsed.buys);
-      DASH  = buildDashboard(PHYS, HEDGE);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onerror = () => {
+      loadedFiles.push({ name: file.name, error: 'read error', buys: [], sells: [], live: [], hedge: [] });
+      renderFileList();
+      if (--remaining === 0) rebuildFromLoadedFiles();
+    };
+    reader.onload = e => {
+      log('Reading ' + file.name + '…');
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+        const parsed = readWorkbook(wb);
+        loadedFiles.push({
+          name: file.name,
+          buys: parsed.buys,
+          sells: parsed.sells,
+          live: parsed.live,
+          hedge: parsed.hedge,
+        });
+        log(`  ✓ ${file.name}: buys=${parsed.buys.length}, sells=${parsed.sells.length}, live=${parsed.live.length}, hedge=${parsed.hedge.length}`);
+      } catch (err) {
+        console.error(err);
+        log('  ❌ ' + file.name + ': ' + err.message);
+        loadedFiles.push({ name: file.name, error: err.message, buys: [], sells: [], live: [], hedge: [] });
+      }
+      renderFileList();
+      if (--remaining === 0) rebuildFromLoadedFiles();
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
 
-      buildAlerts();
+function detectAvailableMetals() {
+  const metals = new Set();
+  RAW_BUYS.forEach(b => { const m = norm(b.metal); if (m) metals.add(m); });
 
-      log(`Sheet "${parsed.sheetName}" (header row ${parsed.hdrRow + 1})\n` +
-          `Parsed → buys=${parsed.buys.length}, sells=${parsed.sells.length}, live=${parsed.live.length}, hedge=${parsed.hedge.length}\n` +
-          `✅ Built → Physical=${PHYS.length} lots, Hedge=${HEDGE.length} lots, Dashboard=${DASH.length} lots\n` +
-          `🚨 Alerts: ${ALERTS.length} found\n` +
-          `💡 Click column headers to sort · Click any row to see transactions · Click Print for PDF`);
+  const canonical = new Set();
+  [...metals].forEach(m => {
+    if (m.includes('ZINC') || m === 'ZN' || m === 'ZNC') canonical.add('ZINC');
+    else if (m.includes('ALUM') || m === 'AL') canonical.add('ALUMINIUM');
+    else canonical.add(m);
+  });
+  availableMetals = [...canonical].sort();
+}
 
-      const metals = [...new Set([...PHYS.map(r=>r.metal), ...HEDGE.map(r=>r.metal)])].filter(m => m && m !== '—').sort();
-      populateFilter('fMetalPhys', metals);
-      populateFilter('fMetalHedge', metals);
-      populateFilter('fMetalDash', metals);
+function rebuildFromLoadedFiles() {
+  RAW_BUYS  = loadedFiles.flatMap(f => f.buys  || []);
+  RAW_SELLS = loadedFiles.flatMap(f => f.sells || []);
+  RAW_HEDGE = loadedFiles.flatMap(f => f.hedge || []);
+  RAW_LIVE  = loadedFiles.flatMap(f => f.live  || []);
 
-      document.getElementById('main').style.display = 'block';
-      document.getElementById('export').style.display = 'inline-block';
-      document.getElementById('print').style.display = 'inline-block';
+  if (RAW_BUYS.length === 0 && RAW_HEDGE.length === 0) {
+    log('No data to display — upload at least one valid file.');
+    document.getElementById('main').style.display = 'none';
+    return;
+  }
 
-      renderPhysical();
-      renderHedge();
-      renderDash();
-    } catch (err) {
-      console.error(err);
-      log('❌ ERROR: ' + err.message + '\n' + err.stack);
-    }
-  };
-  reader.readAsArrayBuffer(file);
+  detectAvailableMetals();
+
+  ALL_PHYS  = buildPhysical(RAW_BUYS, RAW_SELLS);
+  ALL_HEDGE = buildHedge(RAW_HEDGE, RAW_LIVE, RAW_BUYS);
+  ALL_DASH  = buildDashboard(ALL_PHYS, ALL_HEDGE);
+
+  const hasAlu  = ALL_PHYS.some(r => metalMatches(r, 'ALUMINIUM'));
+  const hasZinc = ALL_PHYS.some(r => metalMatches(r, 'ZINC'));
+
+  if (hasAlu && hasZinc) currentMetalView = 'BOTH';
+  else if (hasZinc) currentMetalView = 'ZINC';
+  else if (hasAlu) currentMetalView = 'ALUMINIUM';
+  else currentMetalView = 'BOTH';
+
+  const rawMetals = [...new Set(RAW_BUYS.map(b => norm(b.metal)).filter(Boolean))];
+  log(`\n📊 Merged ${loadedFiles.length} file(s) → ${RAW_BUYS.length} buys, ${RAW_SELLS.length} sells, ${RAW_HEDGE.length} hedge rows\n` +
+      `Raw metal values: ${rawMetals.join(', ') || '(none)'}\n` +
+      `Canonical: ${availableMetals.join(', ') || '(none)'}`);
+
+  document.getElementById('main').style.display = 'block';
+  document.getElementById('export').style.display = 'inline-block';
+  document.getElementById('print').style.display = 'inline-block';
+
+  applyMetalView();
 }
 
 // ============ FILTER / SEARCH LISTENERS ============
-['searchPhys','fMetalPhys','physDateFrom','physDateTo'].forEach(id => document.getElementById(id).addEventListener('input', renderPhysical));
+['searchPhys','physDateFrom','physDateTo'].forEach(id => document.getElementById(id).addEventListener('input', renderPhysical));
 document.getElementById('physClear').onclick = () => {
-  ['searchPhys','fMetalPhys','physDateFrom','physDateTo'].forEach(id => document.getElementById(id).value = '');
+  ['searchPhys','physDateFrom','physDateTo'].forEach(id => document.getElementById(id).value = '');
   renderPhysical();
 };
 
-['searchHedge','fMetalHedge','fRemark','hedgeDateFrom','hedgeDateTo'].forEach(id => document.getElementById(id).addEventListener('input', renderHedge));
+['searchHedge','fRemark','hedgeDateFrom','hedgeDateTo'].forEach(id => document.getElementById(id).addEventListener('input', renderHedge));
 document.getElementById('hedgeClear').onclick = () => {
-  ['searchHedge','fMetalHedge','fRemark','hedgeDateFrom','hedgeDateTo'].forEach(id => document.getElementById(id).value = '');
+  ['searchHedge','fRemark','hedgeDateFrom','hedgeDateTo'].forEach(id => document.getElementById(id).value = '');
   renderHedge();
 };
 
-['searchDash','fMetalDash','fInstruction','dashDateFrom','dashDateTo'].forEach(id => document.getElementById(id).addEventListener('input', renderDash));
+['searchDash','fInstruction','dashDateFrom','dashDateTo'].forEach(id => document.getElementById(id).addEventListener('input', renderDash));
 document.getElementById('dashClear').onclick = () => {
-  ['searchDash','fMetalDash','fInstruction','dashDateFrom','dashDateTo'].forEach(id => document.getElementById(id).value = '');
+  ['searchDash','fInstruction','dashDateFrom','dashDateTo'].forEach(id => document.getElementById(id).value = '');
   renderDash();
 };
 
-// ============ PRINT (#8) ============
 document.getElementById('print').onclick = () => window.print();
 
 // ============ EXPORT ============
