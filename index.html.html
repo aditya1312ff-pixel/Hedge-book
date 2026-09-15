@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hedge Book — Physical · Hedge · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0b1220; --panel: #111c33; --panel-2: #16223d;
+    --border: #1e2d4d; --border-soft: #182543;
+    --text: #e6ecf5; --muted: #8a9ab8; --muted-2: #5b6c8c;
+    --accent: #4f8cff; --pos: #34d399; --neg: #f87171; --warn: #fbbf24;
+    --shadow: 0 8px 24px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, Segoe UI, Roboto, sans-serif;
+    background: radial-gradient(1200px 600px at 10% -10%, #14203a 0%, transparent 60%), var(--bg);
+    color: var(--text); min-height: 100vh; font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    position: sticky; top: 0; z-index: 30;
+    background: linear-gradient(180deg, rgba(15,23,42,.95), rgba(15,23,42,.75));
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border); padding: 16px 32px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #4f8cff, #22d3ee);
+    display: grid; place-items: center; font-weight: 700; color: #06101f; font-size: 16px;
+    box-shadow: 0 4px 14px rgba(79,140,255,.35);
+  }
+  h1 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.2px; }
+  .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .header-actions { margin-left: auto; display: flex; gap: 8px; }
+  .wrap { padding: 28px 32px 60px; max-width: 1800px; margin: 0 auto; }
+  .drop {
+    border: 1.5px dashed var(--border); border-radius: 16px; padding: 60px 24px;
+    text-align: center; cursor: pointer; transition: all .2s ease;
+    background: linear-gradient(180deg, rgba(17,28,51,.6), rgba(15,23,42,.4));
+  }
+  .drop:hover, .drop.over { border-color: var(--accent); background: linear-gradient(180deg, rgba(17,28,51,.9), rgba(15,23,42,.6)); }
+  .drop-icon {
+    font-size: 44px; line-height: 1;
+    background: linear-gradient(135deg, #4f8cff, #22d3ee);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .drop h3 { margin: 8px 0 6px; font-size: 17px; font-weight: 600; }
+  .drop p { margin: 0; color: var(--muted); font-size: 13px; }
+  .drop .hint {
+    display: inline-block; margin-top: 18px; padding: 6px 12px;
+    background: rgba(79,140,255,.08); border: 1px solid rgba(79,140,255,.2);
+    border-radius: 999px; font-size: 11px; color: #a7c4ff;
+  }
+  .log {
+    margin-top: 16px; padding: 12px 16px;
+    background: #060d1c; border: 1px solid var(--border-soft); border-radius: 10px;
+    font-size: 11.5px; color: var(--muted-2);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    white-space: pre-wrap; max-height: 180px; overflow: auto; line-height: 1.6;
+  }
+  .log:empty { display: none; }
+  .tabs {
+    display: flex; gap: 4px; margin: 24px 0 0;
+    background: var(--panel); padding: 4px;
+    border: 1px solid var(--border); border-radius: 12px;
+    width: fit-content;
+  }
+  .tab {
+    padding: 9px 20px; border-radius: 8px;
+    background: transparent; border: none; color: var(--muted);
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    font-family: inherit; transition: all .15s ease;
+  }
+  .tab:hover { color: var(--text); background: var(--panel-2); }
+  .tab.active {
+    background: linear-gradient(135deg, #4f8cff, #3b7de0);
+    color: #fff; box-shadow: 0 4px 12px rgba(79,140,255,.3);
+  }
+  .tab-panel { display: none; animation: fade .3s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px; margin: 22px 0;
+  }
+  .card {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px;
+    position: relative; overflow: hidden;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(79,140,255,.4), transparent);
+  }
+  .card:hover { transform: translateY(-2px); border-color: #2a3f68; }
+  .card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; font-weight: 500; }
+  .card .value { font-size: 24px; font-weight: 700; margin-top: 8px; font-variant-numeric: tabular-nums; letter-spacing: -.4px; }
+  .card .subval { font-size: 11px; color: var(--muted-2); margin-top: 4px; }
+  .pos { color: var(--pos); }
+  .neg { color: var(--neg); }
+  .charts {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 16px; margin-bottom: 22px;
+  }
+  .chart-card {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .chart-card h3 { margin: 0 0 14px; font-size: 13px; font-weight: 600; color: #c7d2e8; letter-spacing: .2px; }
+  .chart-card .canvas-wrap { position: relative; height: 240px; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+  .search-wrap { position: relative; flex: 1; min-width: 240px; max-width: 360px; }
+  .search-wrap svg {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px; color: var(--muted-2); pointer-events: none;
+  }
+  input, select, button {
+    font-family: inherit; font-size: 13px;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 9px 12px; outline: none;
+    transition: border-color .15s, background .15s;
+  }
+  input:focus, select:focus { border-color: var(--accent); background: #16223d; }
+  .search-wrap input { width: 100%; padding-left: 34px; }
+  button { cursor: pointer; font-weight: 500; }
+  button:hover { border-color: var(--accent); background: #16223d; }
+  button.primary { background: linear-gradient(135deg, #4f8cff, #3b7de0); border-color: transparent; color: #fff; }
+  button.primary:hover { background: linear-gradient(135deg, #5f97ff, #4a8bf0); }
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a9ab8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+    padding-right: 30px;
+  }
+  .tablewrap {
+    border: 1px solid var(--border); border-radius: 14px; overflow: auto;
+    max-height: 72vh; background: var(--panel); box-shadow: var(--shadow);
+  }
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    font-size: 12.5px; font-variant-numeric: tabular-nums;
+  }
+  thead th {
+    position: sticky; top: 0; z-index: 2;
+    background: linear-gradient(180deg, #16223d, #111c33);
+    color: #a7b6d4; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .5px;
+    padding: 10px 14px; text-align: right;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  thead th:first-child, tbody td:first-child { text-align: left; }
+  thead tr.group th {
+    text-align: center; font-size: 10.5px; color: var(--muted);
+    padding: 6px 10px; background: #0e1830;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  thead tr.group th.lme-g { color: #7fb0ff; }
+  thead tr.group th.mcx-g { color: #f0a35a; }
+  thead tr.group th.phys-g { color: #7fb0ff; }
+  thead tr.group th.dash-g { color: #c4b5fd; }
+  tbody td {
+    padding: 10px 14px; border-bottom: 1px solid var(--border-soft);
+    white-space: nowrap; text-align: right;
+  }
+  tbody tr { transition: background .12s; }
+  tbody tr:hover td { background: #16223d; }
+  tbody td:first-child { font-weight: 600; }
+  tbody tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 600; letter-spacing: .3px; }
+  .active { background: rgba(251,191,36,.12); color: #fbbf24; border: 1px solid rgba(251,191,36,.25); }
+  .sq { background: rgba(52,211,153,.12); color: #34d399; border: 1px solid rgba(52,211,153,.25); }
+  .b-danger { background: rgba(248,113,113,.12); color: #f87171; border: 1px solid rgba(248,113,113,.25); }
+  .b-info { background: rgba(79,140,255,.12); color: #7fb0ff; border: 1px solid rgba(79,140,255,.25); }
+  .b-warn { background: rgba(251,191,36,.12); color: #fbbf24; border: 1px solid rgba(251,191,36,.25); }
+  .metal-chip {
+    display: inline-block; padding: 2px 8px;
+    background: rgba(79,140,255,.1); color: #a7c4ff;
+    border: 1px solid rgba(79,140,255,.2);
+    border-radius: 6px; font-size: 11px; font-weight: 500;
+  }
+  thead th:first-child { position: sticky; left: 0; z-index: 3; background: #16223d; }
+  tbody td:first-child { position: sticky; left: 0; background: var(--panel); }
+  tbody tr:hover td:first-child { background: #16223d; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #1e2d4d; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: #2a3f68; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">H</div>
+    <div>
+      <h1>Hedge Book</h1>
+      <div class="sub">Physical · Hedge · Combined Dashboard</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button id="export" class="primary" style="display:none">⬇ Export Excel</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="drop" id="drop">
+    <div class="drop-icon">⇪</div>
+    <h3>Drop your Excel file</h3>
+    <p>or click to browse — reads sheet <b>Data Table</b></p>
+    <span class="hint">🔒 Processed locally — nothing is uploaded</span>
+    <input type="file" id="file" accept=".xlsx,.xls" hidden>
+  </div>
+
+  <div id="log" class="log"></div>
+
+  <div id="main" style="display:none">
+    <div class="tabs">
+      <button class="tab active" data-tab="physical">Physical</button>
+      <button class="tab" data-tab="hedge">Hedges</button>
+      <button class="tab" data-tab="dashboard">Dashboard</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-physical">
+      <div class="cards" id="cards-phys"></div>
+      <div class="charts">
+        <div class="chart-card"><h3>Status Breakdown</h3><div class="canvas-wrap"><canvas id="chartPhysStatus"></canvas></div></div>
+        <div class="chart-card"><h3>Top 10 Lots by Realized PnL</h3><div class="canvas-wrap"><canvas id="chartPhysTop"></canvas></div></div>
+        <div class="chart-card"><h3>In-Stock Qty by Metal</h3><div class="canvas-wrap"><canvas id="chartPhysStock"></canvas></div></div>
+        <div class="chart-card"><h3>Buy vs Sell vs In-Stock</h3><div class="canvas-wrap"><canvas id="chartPhysFlow"></canvas></div></div>
+      </div>
+      <div class="controls">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="searchPhys" placeholder="Search Lot ID / Metal / Status…">
+        </div>
+        <select id="fMetalPhys"><option value="">All Metals</option></select>
+      </div>
+      <div class="tablewrap"><table id="tblPhys"></table></div>
+    </div>
+
+    <div class="tab-panel" id="tab-hedge">
+      <div class="cards" id="cards-hedge"></div>
+      <div class="charts">
+        <div class="chart-card"><h3>PnL by Metal — Realized vs Open MTM</h3><div class="canvas-wrap"><canvas id="chartPnl"></canvas></div></div>
+        <div class="chart-card"><h3>Position Split — Long vs Short</h3><div class="canvas-wrap"><canvas id="chartPosition"></canvas></div></div>
+        <div class="chart-card"><h3>Top 10 Lots by Total PnL</h3><div class="canvas-wrap"><canvas id="chartTopLots"></canvas></div></div>
+        <div class="chart-card"><h3>Exposure by Metal &amp; Exchange</h3><div class="canvas-wrap"><canvas id="chartExposure"></canvas></div></div>
+      </div>
+      <div class="controls">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="searchHedge" placeholder="Search Lot ID / Metal…">
+        </div>
+        <select id="fMetalHedge"><option value="">All Metals</option></select>
+        <select id="fRemark">
+          <option value="">All Status</option>
+          <option value="Hedge Active">Active only</option>
+          <option value="Hedge Squared Off">Squared Off only</option>
+        </select>
+      </div>
+      <div class="tablewrap"><table id="tblHedge"></table></div>
+    </div>
+
+    <div class="tab-panel" id="tab-dashboard">
+      <div class="cards" id="cards-dash"></div>
+      <div class="charts">
+        <div class="chart-card"><h3>Hedge Instruction Distribution</h3><div class="canvas-wrap"><canvas id="chartInstruction"></canvas></div></div>
+        <div class="chart-card"><h3>PnL Composition</h3><div class="canvas-wrap"><canvas id="chartPnlMix"></canvas></div></div>
+        <div class="chart-card"><h3>Naked Exposure by Metal</h3><div class="canvas-wrap"><canvas id="chartNaked"></canvas></div></div>
+        <div class="chart-card"><h3>Top 10 Lots by Net PnL</h3><div class="canvas-wrap"><canvas id="chartDashTop"></canvas></div></div>
+      </div>
+      <div class="controls">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="searchDash" placeholder="Search Lot ID / Metal / Instruction…">
+        </div>
+        <select id="fMetalDash"><option value="">All Metals</option></select>
+        <select id="fInstruction">
+          <option value="">All Instructions</option>
+          <option value="🚨 UNDER-HEDGED">Under-Hedged</option>
+          <option value="🚨 OVER-HEDGED">Over-Hedged</option>
+          <option value="✅ FULLY HEDGED">Fully Hedged</option>
+          <option value="⚠️ MOVE TO MCX">Move to MCX</option>
+          <option value="🏁 CLOSED">Closed</option>
+        </select>
+      </div>
+      <div class="tablewrap"><table id="tblDash"></table></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ HELPERS ============
+const num = v => {
+  if (v == null || v === '') return null;
+  if (typeof v === 'string') {
+    v = v.replace(/[,\s₹$€£]/g, '');
+    if (v === '' || v === '-') return null;
+  }
+  const n = Number(v);
+  return isNaN(n) ? null : n;
+};
+const nz = v => num(v) || 0;
+const norm = s => (s == null ? '' : String(s)).trim().toUpperCase().replace(/\s+/g, ' ');
+const dkey = d => {
+  if (d == null || d === '') return '';
+  try {
+    if (typeof d === 'number') {
+      if (d < 1 || d > 100000) return '';
+      const ms = (d - 25569) * 86400 * 1000;
+      const dt = new Date(ms);
+      return isNaN(dt.getTime()) ? '' : dt.toISOString().slice(0, 10);
+    }
+    if (typeof d === 'string') {
+      const s = d.trim();
+      if (!s || s.startsWith('#')) return '';
+      const iso = new Date(s);
+      return isNaN(iso.getTime()) ? '' : iso.toISOString().slice(0, 10);
+    }
+    const dt = d instanceof Date ? d : new Date(d);
+    return isNaN(dt.getTime()) ? '' : dt.toISOString().slice(0, 10);
+  } catch (e) { return ''; }
+};
+const toDate = d => { const k = dkey(d); return k ? new Date(k + 'T00:00:00Z') : null; };
+const round = (n, p = 6) => Math.round(n * 10 ** p) / 10 ** p;
+const sum = arr => arr.reduce((a, b) => a + (b || 0), 0);
+
+// ============ COLUMN DETECTION (FIXED) ============
+function detectColumns(header) {
+  const findAfter = (name, from = 0) => {
+    for (let i = from; i < header.length; i++) if (header[i] === name) return i;
+    return -1;
+  };
+  const findAll = name => {
+    const out = [];
+    for (let i = 0; i < header.length; i++) if (header[i] === name) out.push(i);
+    return out;
+  };
+  const allCat = findAll('CAT');
+
+  // BUYS: first CAT with LOT ID next AND BUY QTY within 12 columns
+  let buysStart = -1;
+  for (const c of allCat) {
+    if (header[c + 1] === 'LOT ID' && findAll('BUY QTY').some(i => i > c && i < c + 12)) {
+      buysStart = c; break;
+    }
+  }
+
+  // SELLS: first CAT *after* buysStart with LOT ID next AND SOLD QTY within 12 columns
+  let sellsStart = -1;
+  for (const c of allCat) {
+    if (c <= buysStart) continue;
+    if (header[c + 1] === 'LOT ID' && findAll('SOLD QTY').some(i => i > c && i < c + 12)) {
+      sellsStart = c; break;
+    }
+  }
+
+  // LIVE: METAL → EXCHANGE → PROMPT DATE
+  let liveStart = -1;
+  for (let i = 0; i < header.length - 2; i++) {
+    if (header[i] === 'METAL' && header[i + 1] === 'EXCHANGE' && header[i + 2] === 'PROMPT DATE') {
+      liveStart = i; break;
+    }
+  }
+
+  // HEDGE: DATE → LOT ID → EXCHANGE → PROMPT DATE
+  let etStart = -1;
+  for (let i = 0; i < header.length - 3; i++) {
+    if (header[i] === 'DATE' && header[i + 1] === 'LOT ID' && header[i + 2] === 'EXCHANGE' && header[i + 3] === 'PROMPT DATE') {
+      etStart = i; break;
+    }
+  }
+
+  const pos = { buys: { start: buysStart }, sells: { start: sellsStart }, live: { start: liveStart }, hedge: { start: etStart } };
+
+  if (buysStart >= 0) {
+    pos.buys.lot   = findAfter('LOT ID',   buysStart);
+    pos.buys.date  = findAfter('BUY DATE', buysStart);
+    pos.buys.metal = findAfter('METAL',    buysStart);
+    pos.buys.qty   = findAfter('BUY QTY',  buysStart);
+    pos.buys.price = findAfter('BUY PRICE',buysStart);
+  }
+  if (sellsStart >= 0) {
+    pos.sells.lot   = findAfter('LOT ID',    sellsStart);
+    pos.sells.date  = findAfter('SALE DATE', sellsStart);
+    pos.sells.qty   = findAfter('SOLD QTY',  sellsStart);
+    pos.sells.price = findAfter('SELL PRICE',sellsStart);
+  }
+  if (liveStart >= 0) {
+    pos.live.metal    = findAfter('METAL',        liveStart);
+    pos.live.exchange = findAfter('EXCHANGE',     liveStart);
+    pos.live.prompt   = findAfter('PROMPT DATE',  liveStart);
+    pos.live.settle   = findAfter('SETTLE PRICE', liveStart);
+  }
+  if (etStart >= 0) {
+    pos.hedge.date     = findAfter('DATE',        etStart);
+    pos.hedge.lot      = findAfter('LOT ID',      etStart);
+    pos.hedge.exchange = findAfter('EXCHANGE',    etStart);
+    pos.hedge.prompt   = findAfter('PROMPT DATE', etStart);
+    pos.hedge.action   = findAfter('ACTION',      etStart);
+    pos.hedge.qty      = findAfter('QTY',         etStart);
+    pos.hedge.final    = findAfter('FINAL PRICE', etStart);
+    pos.hedge.fx       = findAfter('FX RATE',     etStart);
+  }
+  return pos;
+}
+
+// ============ READ WORKBOOK ============
+function readWorkbook(wb) {
+  const sheetName = wb.SheetNames.find(n => /data\s*table/i.test(n)) || wb.SheetNames[0];
+  const ws = wb.Sheets[sheetName];
+  const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
+
+  let hdrRow = -1;
+  for (let i = 0; i < Math.min(aoa.length, 15); i++) {
+    const r = (aoa[i] || []).map(x => norm(x));
+    if (r.includes('CAT') && r.includes('LOT ID')) { hdrRow = i; break; }
+  }
+  if (hdrRow < 0) throw new Error('Header row not found in sheet "' + sheetName + '"');
+
+  const header = (aoa[hdrRow] || []).map(x => norm(x));
+  const pos = detectColumns(header);
+  console.log('Header:', header);
+  console.log('Positions:', pos);
+
+  const dataRows = aoa.slice(hdrRow + 1);
+  const buys = [], sells = [], live = [], hedge = [];
+  const g = (row, i) => (i != null && i >= 0) ? row[i] : null;
+
+  dataRows.forEach((r, idx) => {
+    if (!r) return;
+
+    // BUYS
+    if (pos.buys.start >= 0) {
+      const lot = g(r, pos.buys.lot);
+      if (lot != null && String(lot).trim() !== '' && norm(lot) !== 'LOT ID') {
+        buys.push({
+          lot: String(lot).trim(),
+          date: g(r, pos.buys.date),
+          metal: g(r, pos.buys.metal),
+          qty: num(g(r, pos.buys.qty)),
+          price: num(g(r, pos.buys.price)),
+        });
+      }
+    }
+
+    // SELLS
+    if (pos.sells.start >= 0) {
+      const lot = g(r, pos.sells.lot);
+      const qty = num(g(r, pos.sells.qty));
+      if (lot != null && String(lot).trim() !== '' && norm(lot) !== 'LOT ID') {
+        const rec = {
+          lot: String(lot).trim(),
+          date: g(r, pos.sells.date),
+          qty: qty,
+          price: num(g(r, pos.sells.price)),
+        };
+        sells.push(rec);
+        console.log('SELL #' + idx + ':', rec);
+      }
+    }
+
+    // LIVE
+    if (pos.live.start >= 0) {
+      const lm = g(r, pos.live.metal), le = g(r, pos.live.exchange), lp = g(r, pos.live.prompt);
+      if (lm != null || le != null || lp != null) {
+        live.push({ metal: lm, exchange: le, prompt: lp, settle: num(g(r, pos.live.settle)) });
+      }
+    }
+
+    // HEDGE
+    if (pos.hedge.start >= 0) {
+      const lot = g(r, pos.hedge.lot);
+      if (lot != null && String(lot).trim() !== '' && norm(lot) !== 'LOT ID') {
+        hedge.push({
+          date: g(r, pos.hedge.date), lot: String(lot).trim(),
+          exchange: g(r, pos.hedge.exchange), prompt: g(r, pos.hedge.prompt),
+          action: g(r, pos.hedge.action), qty: num(g(r, pos.hedge.qty)),
+          finalPrice: num(g(r, pos.hedge.final)), fxRate: num(g(r, pos.hedge.fx)),
+        });
+      }
+    }
+  });
+
+  // Debug: show sells for AL1
+  console.log('AL1 sells:', sells.filter(s => s.lot === 'AL1'));
+
+  return { buys, sells, live, hedge, sheetName, hdrRow, pos };
+}
+
+// ============ PHYSICAL TRACKER ============
+// Merge by Lot ID: buy (1 per lot) + all sells for that lot
+function buildPhysical(buys, sells) {
+  const sellsByLot = {};
+  sells.forEach(s => {
+    const lot = String(s.lot).trim();
+    const q = nz(s.qty);
+    const p = nz(s.price);
+    if (!sellsByLot[lot]) sellsByLot[lot] = { qty: 0, value: 0, count: 0 };
+    sellsByLot[lot].qty   += q;
+    sellsByLot[lot].value += p * q;
+    sellsByLot[lot].count += 1;
+  });
+
+  console.log('sellsByLot AL1:', sellsByLot['AL1']);
+
+  return buys.map(b => {
+    const lot = String(b.lot).trim();
+    const s = sellsByLot[lot] || { qty: 0, value: 0, count: 0 };
+    const QtyB = nz(b.qty);
+    const QtyS = s.qty;
+    const BuyP  = nz(b.price);
+    const SellP = QtyS > 0 ? (s.value / QtyS) : 0;
+
+    const InStock = QtyB - QtyS;
+    const Realized = QtyS > 0 ? (SellP - BuyP) * QtyS : 0;
+    const Unpriced = InStock;
+
+    let Status;
+    if (QtyS === 0 && QtyB > 0)  Status = 'Open Stock (Unsold)';
+    else if (QtyS < QtyB)        Status = 'Open Stock (Partially Sold)';
+    else if (QtyS === QtyB)      Status = 'CLOSED';
+    else                         Status = 'Over-Sold';
+
+    return {
+      lot, metal: b.metal, physStatus: Status,
+      physBuyDate: toDate(b.date),
+      physBuyQty: QtyB, physBuyPrice: BuyP,
+      physSellQty: QtyS, physSellPrice: SellP,
+      physInStockQty: InStock, physUnpricedQty: Unpriced,
+      physRealizedPnL: Realized,
+    };
+  });
+}
+
+// ============ HEDGE TRACKER ============
+function buildHedge(hedge, live, buys) {
+  const metalByLot = {};
+  buys.forEach(b => { const k = String(b.lot).trim(); if (k) metalByLot[k] = b.metal; });
+
+  const liveMap = {};
+  live.forEach(l => {
+    const m = norm(l.metal), e = norm(l.exchange), d = dkey(l.prompt);
+    if (!m || !e || !d) return;
+    if (l.settle != null) liveMap[m + '|' + e + '|' + d] = l.settle;
+  });
+
+  const H = hedge.map(h => {
+    const lotKey = String(h.lot).trim();
+    const metal = metalByLot[lotKey] || null;
+    const key = norm(metal) + '|' + norm(h.exchange) + '|' + dkey(h.prompt);
+    return {
+      lot: lotKey, metal, exchange: norm(h.exchange), action: norm(h.action),
+      qty: h.qty || 0, finalPrice: h.finalPrice || 0, fxRate: h.fxRate || 0,
+      prompt: toDate(h.prompt), settle: liveMap[key] ?? null,
+    };
+  }).filter(r => r.action === 'BUY' || r.action === 'SELL');
+
+  const grp = {};
+  H.forEach(r => {
+    const k = r.lot + '|' + r.metal + '|' + r.exchange + '|' + dkey(r.prompt);
+    if (!grp[k]) grp[k] = { buy: 0, sell: 0, settle: null };
+    if (r.action === 'BUY')  grp[k].buy  += r.qty;
+    if (r.action === 'SELL') grp[k].sell += r.qty;
+    if (r.settle != null) grp[k].settle = Math.max(grp[k].settle ?? -Infinity, r.settle);
+  });
+
+  const rows = H.map(r => {
+    const g = grp[r.lot + '|' + r.metal + '|' + r.exchange + '|' + dkey(r.prompt)] || { buy:0, sell:0, settle:null };
+    const isLME = r.exchange === 'LME';
+    const conv = (!r.fxRate) ? 1 : r.fxRate;
+    const settleP = (g.settle == null) ? r.finalPrice : g.settle;
+    const priceDiff = r.action === 'BUY' ? (settleP - r.finalPrice) : (r.finalPrice - settleP);
+    const hasBoth = g.buy > 0 && g.sell > 0;
+    const matchedLimit = hasBoth ? Math.min(g.buy, g.sell) : 0;
+    let matchedRaw = 0;
+    if (r.action === 'BUY'  && g.buy  > 0) matchedRaw = (r.qty / g.buy)  * matchedLimit;
+    if (r.action === 'SELL' && g.sell > 0) matchedRaw = (r.qty / g.sell) * matchedLimit;
+    const matchedQty = round(matchedRaw, 6);
+    const openQty = round(r.qty - matchedQty, 6);
+    const fx = isLME ? conv : 1;
+    return {
+      ...r,
+      mtm: openQty * priceDiff * fx,
+      realized: matchedQty * priceDiff * fx,
+      netV: r.action === 'BUY' ? r.qty : -r.qty,
+      bVal: r.action === 'BUY'  ? r.finalPrice * r.qty : 0,
+      sVal: r.action === 'SELL' ? r.finalPrice * r.qty : 0,
+    };
+  });
+
+  const byLot = {};
+  rows.forEach(r => { const k = r.lot + '|' + (r.metal || ''); (byLot[k] = byLot[k] || []).push(r); });
+
+  return Object.entries(byLot).map(([k, g]) => {
+    const [lot, metal] = k.split('|');
+    const pick = (ex, act) => g.filter(x => x.exchange === ex && (!act || x.action === act));
+    const sumQ = arr => arr.reduce((s, x) => s + x.qty, 0);
+    const section = ex => {
+      const b = pick(ex, 'BUY'), s = pick(ex, 'SELL');
+      const bq = sumQ(b), sq = sumQ(s);
+      const settles = pick(ex).map(x => x.settle).filter(v => v != null);
+      return {
+        prompt: pick(ex).map(x => x.prompt).filter(Boolean).sort((a, b) => b - a)[0] || null,
+        buyQty: bq, sellQty: sq,
+        avgBuyP:  bq ? b.reduce((s, x) => s + x.bVal, 0) / bq : 0,
+        avgSellP: sq ? s.reduce((s, x) => s + x.sVal, 0) / sq : 0,
+        settle: settles.length ? Math.max(...settles) : 0,
+        netQty: pick(ex).reduce((s, x) => s + x.netV, 0),
+        mtm:    pick(ex).reduce((s, x) => s + x.mtm, 0),
+        realized: pick(ex).reduce((s, x) => s + x.realized, 0),
+      };
+    };
+    const netTotal = g.reduce((s, x) => s + x.netV, 0);
+    return {
+      lot, metal: metal || '—',
+      lme: section('LME'), mcx: section('MCX'),
+      totalRealized: g.reduce((s, x) => s + x.realized, 0),
+      totalMTM: g.reduce((s, x) => s + x.mtm, 0),
+      remark: Math.abs(netTotal) < 0.0001 ? 'Hedge Squared Off' : 'Hedge Active',
+    };
+  }).filter(r => r.lme.buyQty || r.lme.sellQty || r.mcx.buyQty || r.mcx.sellQty);
+}
+
+// ============ DASHBOARD ============
+function buildDashboard(physical, hedge) {
+  const hedgeByLot = {};
+  hedge.forEach(h => { hedgeByLot[h.lot] = h; });
+
+  return physical.map(p => {
+    const h = hedgeByLot[p.lot] || null;
+    const LN = h ? h.lme.netQty : 0;
+    const MN = h ? h.mcx.netQty : 0;
+    const LN_MTM = h ? h.lme.mtm : 0;
+    const MN_MTM = h ? h.mcx.mtm : 0;
+    const LN_Real = h ? h.lme.realized : 0;
+    const MN_Real = h ? h.mcx.realized : 0;
+    const TotalHReal = h ? h.totalRealized : 0;
+
+    const TotalHMTM = LN_MTM + MN_MTM;
+    const PhysReal = p.physRealizedPnL || 0;
+    const Naked = p.physInStockQty + LN + MN;
+
+    let Instruction;
+    if (Naked === 0 && LN !== 0) Instruction = '⚠️ MOVE TO MCX';
+    else if (Naked === 0 && MN !== 0) Instruction = '✅ FULLY HEDGED';
+    else if (Naked > 0) Instruction = '🚨 UNDER-HEDGED';
+    else if (Naked < 0) Instruction = '🚨 OVER-HEDGED';
+    else Instruction = '🏁 CLOSED';
+
+    return {
+      lot: p.lot, metal: p.metal, physStatus: p.physStatus,
+      physBuyDate: p.physBuyDate, physBuyQty: p.physBuyQty, physBuyPrice: p.physBuyPrice,
+      physSellQty: p.physSellQty, physSellPrice: p.physSellPrice,
+      physInStockQty: p.physInStockQty, physUnpricedQty: p.physUnpricedQty,
+      physRealizedPnL: p.physRealizedPnL,
+      lmePrompt: h ? h.lme.prompt : null, lmeNetQty: LN, lmeMTM: LN_MTM, lmeRealized: LN_Real,
+      mcxPrompt: h ? h.mcx.prompt : null, mcxNetQty: MN, mcxMTM: MN_MTM, mcxRealized: MN_Real,
+      nakedExposure: Naked, totalHedgeMTM: TotalHMTM,
+      totalNetRealizedPnL: PhysReal + TotalHReal,
+      instruction: Instruction,
+    };
+  });
+}
+
+// ============ STATE ============
+let PHYS = [], HEDGE = [], DASH = [];
+const logEl = document.getElementById('log');
+const log = msg => { logEl.textContent = msg; console.log(msg); };
+const fmt  = (n, d = 2) => (n == null || isNaN(n)) ? '—' : Number(n).toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtD = d => d ? new Date(d).toISOString().slice(0, 10) : '—';
+const pnlClass = n => n > 0 ? 'pos' : n < 0 ? 'neg' : '';
+
+// ============ RENDER: PHYSICAL ============
+function renderPhysical() {
+  const q  = document.getElementById('searchPhys').value.toLowerCase();
+  const fm = document.getElementById('fMetalPhys').value;
+  const filtered = PHYS.filter(r =>
+    (!q || (r.lot + ' ' + (r.metal||'') + ' ' + (r.physStatus||'')).toLowerCase().includes(q)) &&
+    (!fm || r.metal === fm)
+  );
+
+  const totalReal = sum(filtered.map(r => r.physRealizedPnL));
+  const totalStock = sum(filtered.map(r => r.physInStockQty));
+  const totalSold = sum(filtered.map(r => r.physSellQty));
+  const totalBought = sum(filtered.map(r => r.physBuyQty));
+  const unpriced = sum(filtered.map(r => r.physUnpricedQty));
+
+  document.getElementById('cards-phys').innerHTML = `
+    <div class="card"><div class="label">Realized PnL</div><div class="value ${pnlClass(totalReal)}">${fmt(totalReal)}</div><div class="subval">Physical side</div></div>
+    <div class="card"><div class="label">In Stock</div><div class="value">${fmt(totalStock, 0)}</div><div class="subval">Qty held</div></div>
+    <div class="card"><div class="label">Total Bought</div><div class="value">${fmt(totalBought, 0)}</div><div class="subval">All lots</div></div>
+    <div class="card"><div class="label">Total Sold</div><div class="value">${fmt(totalSold, 0)}</div><div class="subval">All lots</div></div>
+    <div class="card"><div class="label">Unsold Stock</div><div class="value ${pnlClass(unpriced)}">${fmt(unpriced, 0)}</div><div class="subval">Open position</div></div>
+  `;
+
+  const cols = [
+    { k: 'lot', label: 'Lot ID' },
+    { k: 'metal', label: 'Metal', chip: true },
+    { k: 'physBuyDate', label: 'Buy Date', fmt: fmtD },
+    { k: 'physBuyQty', label: 'Buy Qty', fmt: x => fmt(x, 0) },
+    { k: 'physBuyPrice', label: 'Buy Price', fmt },
+    { k: 'physSellQty', label: 'Sold Qty', fmt: x => fmt(x, 0) },
+    { k: 'physSellPrice', label: 'Sell Price', fmt },
+    { k: 'physInStockQty', label: 'In Stock', fmt: x => fmt(x, 0) },
+    { k: 'physUnpricedQty', label: 'Unsold', fmt: x => fmt(x, 0), pnl: true },
+    { k: 'physRealizedPnL', label: 'Realized PnL', fmt, pnl: true },
+    { k: 'physStatus', label: 'Status' },
+  ];
+
+  let headHtml = '<thead><tr>' + cols.map(c => `<th>${c.label}</th>`).join('') + '</tr></thead>';
+  let bodyHtml = '<tbody>';
+  filtered.forEach(r => {
+    bodyHtml += '<tr>';
+    cols.forEach(c => {
+      const v = r[c.k];
+      if (c.chip) bodyHtml += `<td><span class="metal-chip">${v || '—'}</span></td>`;
+      else if (c.k === 'physStatus') bodyHtml += `<td style="text-align:left;font-size:11.5px;color:#a7b6d4">${v || '—'}</td>`;
+      else {
+        const f = c.fmt || (x => x);
+        const cls = c.pnl ? pnlClass(v) : '';
+        bodyHtml += `<td class="${cls}">${f(v)}</td>`;
+      }
+    });
+    bodyHtml += '</tr>';
+  });
+  bodyHtml += '</tbody>';
+  document.getElementById('tblPhys').innerHTML = headHtml + bodyHtml;
+  renderPhysicalCharts(filtered);
+}
+
+// ============ RENDER: HEDGE ============
+function renderHedge() {
+  const q  = document.getElementById('searchHedge').value.toLowerCase();
+  const fm = document.getElementById('fMetalHedge').value;
+  const fr = document.getElementById('fRemark').value;
+  const filtered = HEDGE.filter(r =>
+    (!q || (r.lot + ' ' + r.metal).toLowerCase().includes(q)) &&
+    (!fm || r.metal === fm) &&
+    (!fr || r.remark === fr)
+  );
+
+  const totalReal = sum(filtered.map(r => r.totalRealized));
+  const totalMTM  = sum(filtered.map(r => r.totalMTM));
+  const active    = filtered.filter(r => r.remark === 'Hedge Active').length;
+  const squared   = filtered.filter(r => r.remark === 'Hedge Squared Off').length;
+
+  document.getElementById('cards-hedge').innerHTML = `
+    <div class="card"><div class="label">Realized PnL</div><div class="value ${pnlClass(totalReal)}">${fmt(totalReal)}</div><div class="subval">Closed portion</div></div>
+    <div class="card"><div class="label">Open MTM</div><div class="value ${pnlClass(totalMTM)}">${fmt(totalMTM)}</div><div class="subval">Mark-to-market</div></div>
+    <div class="card"><div class="label">Active Hedges</div><div class="value">${active}</div><div class="subval">Open positions</div></div>
+    <div class="card"><div class="label">Squared Off</div><div class="value">${squared}</div><div class="subval">Fully closed lots</div></div>
+    <div class="card"><div class="label">Lots Shown</div><div class="value">${filtered.length}</div><div class="subval">of ${HEDGE.length} total</div></div>
+  `;
+
+  const cols = [
+    { k: 'lot', label: 'Lot ID' },
+    { k: 'metal', label: 'Metal', chip: true },
+    { group: 'LME', cls: 'lme-g' },
+    { k: 'lme.prompt', label: 'Prompt', fmt: fmtD },
+    { k: 'lme.buyQty', label: 'Buy', fmt: x => fmt(x, 0) },
+    { k: 'lme.avgBuyP', label: 'Avg Buy', fmt },
+    { k: 'lme.sellQty', label: 'Sell', fmt: x => fmt(x, 0) },
+    { k: 'lme.avgSellP', label: 'Avg Sell', fmt },
+    { k: 'lme.settle', label: 'Settle', fmt },
+    { k: 'lme.netQty', label: 'Net', fmt: x => fmt(x, 0) },
+    { k: 'lme.mtm', label: 'MTM', fmt, pnl: true },
+    { k: 'lme.realized', label: 'Realized', fmt, pnl: true },
+    { group: 'MCX', cls: 'mcx-g' },
+    { k: 'mcx.prompt', label: 'Prompt', fmt: fmtD },
+    { k: 'mcx.buyQty', label: 'Buy', fmt: x => fmt(x, 0) },
+    { k: 'mcx.avgBuyP', label: 'Avg Buy', fmt },
+    { k: 'mcx.sellQty', label: 'Sell', fmt: x => fmt(x, 0) },
+    { k: 'mcx.avgSellP', label: 'Avg Sell', fmt },
+    { k: 'mcx.settle', label: 'Settle', fmt },
+    { k: 'mcx.netQty', label: 'Net', fmt: x => fmt(x, 0) },
+    { k: 'mcx.mtm', label: 'MTM', fmt, pnl: true },
+    { k: 'mcx.realized', label: 'Realized', fmt, pnl: true },
+    { k: 'totalRealized', label: 'Total Realized', fmt, pnl: true },
+    { k: 'remark', label: 'Status', badge: true },
+  ];
+  const get = (o, p) => p.split('.').reduce((a, k) => a?.[k], o);
+
+  let headHtml = '<thead><tr class="group">';
+  headHtml += '<th colspan="2"></th>';
+  headHtml += '<th colspan="10" class="lme-g">LME</th>';
+  headHtml += '<th colspan="10" class="mcx-g">MCX</th>';
+  headHtml += '<th colspan="2"></th>';
+  headHtml += '</tr><tr>';
+  cols.forEach(c => { headHtml += `<th>${c.group ? c.group : c.label}</th>`; });
+  headHtml += '</tr></thead>';
+
+  let bodyHtml = '<tbody>';
+  filtered.forEach(r => {
+    bodyHtml += '<tr>';
+    cols.forEach(c => {
+      if (c.group) return;
+      const v = get(r, c.k);
+      if (c.chip) bodyHtml += `<td><span class="metal-chip">${v}</span></td>`;
+      else if (c.badge) {
+        const cls = v === 'Hedge Active' ? 'active' : 'sq';
+        bodyHtml += `<td><span class="badge ${cls}">${v}</span></td>`;
+      } else {
+        const f = c.fmt || (x => x);
+        const cls = c.pnl ? pnlClass(v) : '';
+        bodyHtml += `<td class="${cls}">${f(v)}</td>`;
+      }
+    });
+    bodyHtml += '</tr>';
+  });
+  bodyHtml += '</tbody>';
+  document.getElementById('tblHedge').innerHTML = headHtml + bodyHtml;
+  renderHedgeCharts(filtered);
+}
+
+// ============ RENDER: DASHBOARD ============
+function renderDash() {
+  const q  = document.getElementById('searchDash').value.toLowerCase();
+  const fm = document.getElementById('fMetalDash').value;
+  const fi = document.getElementById('fInstruction').value;
+  const filtered = DASH.filter(r =>
+    (!q || (r.lot + ' ' + (r.metal||'') + ' ' + (r.instruction||'')).toLowerCase().includes(q)) &&
+    (!fm || r.metal === fm) &&
+    (!fi || r.instruction === fi)
+  );
+
+  const totalNetReal = sum(filtered.map(r => r.totalNetRealizedPnL));
+  const totalHedgeMTM = sum(filtered.map(r => r.totalHedgeMTM));
+  const totalNaked = sum(filtered.map(r => r.nakedExposure));
+  const under = filtered.filter(r => r.instruction.includes('UNDER-HEDGED')).length;
+  const over = filtered.filter(r => r.instruction.includes('OVER-HEDGED')).length;
+  const full = filtered.filter(r => r.instruction.includes('FULLY HEDGED')).length;
+
+  document.getElementById('cards-dash').innerHTML = `
+    <div class="card"><div class="label">Total Net Realized PnL</div><div class="value ${pnlClass(totalNetReal)}">${fmt(totalNetReal)}</div><div class="subval">Physical + Hedge</div></div>
+    <div class="card"><div class="label">Total Hedge MTM</div><div class="value ${pnlClass(totalHedgeMTM)}">${fmt(totalHedgeMTM)}</div><div class="subval">Open MTM</div></div>
+    <div class="card"><div class="label">Naked Exposure</div><div class="value ${pnlClass(totalNaked)}">${fmt(totalNaked, 0)}</div><div class="subval">Unhedged qty</div></div>
+    <div class="card"><div class="label">Under-Hedged</div><div class="value neg">${under}</div><div class="subval">Lots need hedge</div></div>
+    <div class="card"><div class="label">Over-Hedged</div><div class="value neg">${over}</div><div class="subval">Excess hedge</div></div>
+    <div class="card"><div class="label">Fully Hedged</div><div class="value pos">${full}</div><div class="subval">Balanced</div></div>
+  `;
+
+  const cols = [
+    { k: 'lot', label: 'Lot ID' },
+    { k: 'metal', label: 'Metal', chip: true },
+    { group: 'PHYSICAL', cls: 'phys-g' },
+    { k: 'physBuyDate', label: 'Buy Date', fmt: fmtD },
+    { k: 'physBuyQty', label: 'Buy Qty', fmt: x => fmt(x, 0) },
+    { k: 'physBuyPrice', label: 'Buy Price', fmt },
+    { k: 'physSellQty', label: 'Sold Qty', fmt: x => fmt(x, 0) },
+    { k: 'physSellPrice', label: 'Sell Price', fmt },
+    { k: 'physInStockQty', label: 'In Stock', fmt: x => fmt(x, 0) },
+    { k: 'physRealizedPnL', label: 'Phys Realized', fmt, pnl: true },
+    { group: 'HEDGE — LME', cls: 'lme-g' },
+    { k: 'lmePrompt', label: 'Prompt', fmt: fmtD },
+    { k: 'lmeNetQty', label: 'Net', fmt: x => fmt(x, 0) },
+    { k: 'lmeMTM', label: 'MTM', fmt, pnl: true },
+    { k: 'lmeRealized', label: 'Realized', fmt, pnl: true },
+    { group: 'HEDGE — MCX', cls: 'mcx-g' },
+    { k: 'mcxPrompt', label: 'Prompt', fmt: fmtD },
+    { k: 'mcxNetQty', label: 'Net', fmt: x => fmt(x, 0) },
+    { k: 'mcxMTM', label: 'MTM', fmt, pnl: true },
+    { k: 'mcxRealized', label: 'Realized', fmt, pnl: true },
+    { group: 'NET', cls: 'dash-g' },
+    { k: 'nakedExposure', label: 'Naked Qty', fmt: x => fmt(x, 0), pnl: true },
+    { k: 'totalHedgeMTM', label: 'Total MTM', fmt, pnl: true },
+    { k: 'totalNetRealizedPnL', label: 'Net Realized', fmt, pnl: true },
+    { k: 'instruction', label: 'Instruction', badge: true },
+  ];
+  const get = (o, p) => p.split('.').reduce((a, k) => a?.[k], o);
+
+  let headHtml = '<thead><tr class="group">';
+  let i = 0;
+  while (i < cols.length) {
+    const c = cols[i];
+    if (c.group) {
+      let span = 0; let j = i + 1;
+      while (j < cols.length && !cols[j].group) { span++; j++; }
+      headHtml += `<th colspan="${span}" class="${c.cls}">${c.group}</th>`;
+      i = j;
+    } else { headHtml += `<th></th>`; i++; }
+  }
+  headHtml += '</tr><tr>';
+  cols.forEach(c => { headHtml += `<th>${c.group ? c.group : c.label}</th>`; });
+  headHtml += '</tr></thead>';
+
+  let bodyHtml = '<tbody>';
+  filtered.forEach(r => {
+    bodyHtml += '<tr>';
+    cols.forEach(c => {
+      if (c.group) return;
+      const v = get(r, c.k);
+      if (c.chip) bodyHtml += `<td><span class="metal-chip">${v||'—'}</span></td>`;
+      else if (c.badge) {
+        let cls = 'b-info';
+        if (v.includes('UNDER') || v.includes('OVER')) cls = 'b-danger';
+        else if (v.includes('FULLY')) cls = 'sq';
+        else if (v.includes('MOVE')) cls = 'b-warn';
+        bodyHtml += `<td><span class="badge ${cls}">${v}</span></td>`;
+      } else {
+        const f = c.fmt || (x => x);
+        const cls = c.pnl ? pnlClass(v) : '';
+        bodyHtml += `<td class="${cls}">${f(v)}</td>`;
+      }
+    });
+    bodyHtml += '</tr>';
+  });
+  bodyHtml += '</tbody>';
+  document.getElementById('tblDash').innerHTML = headHtml + bodyHtml;
+  renderDashCharts(filtered);
+}
+
+// ============ CHARTS ============
+let charts = {};
+Chart.defaults.color = '#8a9ab8';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 11;
+const COLORS = { accent: '#4f8cff', pos: '#34d399', neg: '#f87171', warn: '#fbbf24', lme: '#7fb0ff', mcx: '#f0a35a', purple: '#c4b5fd', grid: 'rgba(255,255,255,0.06)' };
+
+function fmtCompact(n) {
+  const abs = Math.abs(n);
+  if (abs >= 1e7) return (n / 1e7).toFixed(2) + 'Cr';
+  if (abs >= 1e5) return (n / 1e5).toFixed(2) + 'L';
+  if (abs >= 1e3) return (n / 1e3).toFixed(1) + 'k';
+  return n.toFixed(0);
+}
+
+function renderPhysicalCharts(data) {
+  const statusCount = {};
+  data.forEach(r => {
+    let s = r.physStatus || 'Unknown';
+    if (s.startsWith('Open Stock')) s = 'Open Stock';
+    else if (s.startsWith('CLOSED')) s = 'Closed';
+    else if (s.startsWith('Over-Sold')) s = 'Over-Sold';
+    statusCount[s] = (statusCount[s] || 0) + 1;
+  });
+  const statusLabels = Object.keys(statusCount);
+  const statusValues = statusLabels.map(k => statusCount[k]);
+  const statusPalette = ['#4f8cff', '#34d399', '#fbbf24', '#f87171', '#c4b5fd', '#22d3ee'];
+
+  if (charts.physStatus) charts.physStatus.destroy();
+  charts.physStatus = new Chart(document.getElementById('chartPhysStatus'), {
+    type: 'doughnut',
+    data: { labels: statusLabels, datasets: [{ data: statusValues, backgroundColor: statusPalette, borderWidth: 0, hoverOffset: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%',
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10 } } } },
+  });
+
+  const top = [...data].map(r => ({ lot: r.lot, pnl: r.physRealizedPnL }))
+    .sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 10);
+
+  if (charts.physTop) charts.physTop.destroy();
+  charts.physTop = new Chart(document.getElementById('chartPhysTop'), {
+    type: 'bar',
+    data: { labels: top.map(t => t.lot),
+      datasets: [{ label: 'Realized PnL', data: top.map(t => t.pnl), backgroundColor: top.map(t => t.pnl >= 0 ? COLORS.pos : COLORS.neg), borderRadius: 6, maxBarThickness: 22 }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } }, y: { grid: { display: false } } } },
+  });
+
+  const metals = [...new Set(data.map(r => r.metal))].filter(Boolean).sort();
+  const stockByMetal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.physInStockQty)));
+
+  if (charts.physStock) charts.physStock.destroy();
+  charts.physStock = new Chart(document.getElementById('chartPhysStock'), {
+    type: 'bar',
+    data: { labels: metals, datasets: [{ label: 'In Stock', data: stockByMetal, backgroundColor: COLORS.accent, borderRadius: 6, maxBarThickness: 40 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
+  });
+
+  const buyByMetal  = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.physBuyQty)));
+  const sellByMetal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.physSellQty)));
+
+  if (charts.physFlow) charts.physFlow.destroy();
+  charts.physFlow = new Chart(document.getElementById('chartPhysFlow'), {
+    type: 'bar',
+    data: { labels: metals,
+      datasets: [
+        { label: 'Bought', data: buyByMetal, backgroundColor: COLORS.accent, borderRadius: 6, maxBarThickness: 40 },
+        { label: 'Sold', data: sellByMetal, backgroundColor: COLORS.mcx, borderRadius: 6, maxBarThickness: 40 },
+        { label: 'In Stock', data: stockByMetal, backgroundColor: COLORS.pos, borderRadius: 6, maxBarThickness: 40 },
+      ] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14 } } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
+  });
+}
+
+function renderHedgeCharts(data) {
+  const metals = [...new Set(data.map(r => r.metal))].filter(m => m && m !== '—').sort();
+  const pnlReal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.totalRealized)));
+  const pnlMTM  = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.totalMTM)));
+
+  if (charts.pnl) charts.pnl.destroy();
+  charts.pnl = new Chart(document.getElementById('chartPnl'), {
+    type: 'bar',
+    data: { labels: metals, datasets: [
+      { label: 'Realized', data: pnlReal, backgroundColor: COLORS.accent, borderRadius: 6, maxBarThickness: 40 },
+      { label: 'Open MTM', data: pnlMTM, backgroundColor: COLORS.warn, borderRadius: 6, maxBarThickness: 40 },
+    ] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14 } } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
+  });
+
+  const longQty  = sum(data.map(r => Math.max(0,  (r.lme.netQty||0) + (r.mcx.netQty||0))));
+  const shortQty = sum(data.map(r => Math.max(0, -((r.lme.netQty||0) + (r.mcx.netQty||0)))));
+
+  if (charts.position) charts.position.destroy();
+  charts.position = new Chart(document.getElementById('chartPosition'), {
+    type: 'doughnut',
+    data: { labels: ['Long (Net Buy)', 'Short (Net Sell)'],
+      datasets: [{ data: [longQty, shortQty], backgroundColor: [COLORS.pos, COLORS.neg], borderWidth: 0, hoverOffset: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%',
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14 } } } },
+  });
+
+  const topLots = [...data].map(r => ({ lot: r.lot, pnl: r.totalRealized + r.totalMTM }))
+    .sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 10);
+
+  if (charts.topLots) charts.topLots.destroy();
+  charts.topLots = new Chart(document.getElementById('chartTopLots'), {
+    type: 'bar',
+    data: { labels: topLots.map(l => l.lot),
+      datasets: [{ label: 'Total PnL', data: topLots.map(l => l.pnl), backgroundColor: topLots.map(l => l.pnl >= 0 ? COLORS.pos : COLORS.neg), borderRadius: 6, maxBarThickness: 22 }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } }, y: { grid: { display: false } } } },
+  });
+
+  const lmeExposure = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.lme.netQty)));
+  const mcxExposure = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.mcx.netQty)));
+
+  if (charts.exposure) charts.exposure.destroy();
+  charts.exposure = new Chart(document.getElementById('chartExposure'), {
+    type: 'bar',
+    data: { labels: metals, datasets: [
+      { label: 'LME Net Qty', data: lmeExposure, backgroundColor: COLORS.lme, borderRadius: 6, maxBarThickness: 40 },
+      { label: 'MCX Net Qty', data: mcxExposure, backgroundColor: COLORS.mcx, borderRadius: 6, maxBarThickness: 40 },
+    ] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14 } } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
+  });
+}
+
+function renderDashCharts(data) {
+  const instrCount = {};
+  data.forEach(r => { instrCount[r.instruction] = (instrCount[r.instruction] || 0) + 1; });
+  const instrLabels = Object.keys(instrCount);
+  const instrValues = instrLabels.map(k => instrCount[k]);
+  const instrColors = instrLabels.map(l => {
+    if (l.includes('UNDER') || l.includes('OVER')) return COLORS.neg;
+    if (l.includes('FULLY')) return COLORS.pos;
+    if (l.includes('MOVE')) return COLORS.warn;
+    return COLORS.accent;
+  });
+
+  if (charts.instruction) charts.instruction.destroy();
+  charts.instruction = new Chart(document.getElementById('chartInstruction'), {
+    type: 'doughnut',
+    data: { labels: instrLabels, datasets: [{ data: instrValues, backgroundColor: instrColors, borderWidth: 0, hoverOffset: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%',
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10 } } } },
+  });
+
+  const physReal = sum(data.map(r => r.physRealizedPnL));
+  const hedgeReal = sum(data.map(r => r.lmeRealized + r.mcxRealized));
+  const hedgeMTM  = sum(data.map(r => r.totalHedgeMTM));
+
+  if (charts.pnlMix) charts.pnlMix.destroy();
+  charts.pnlMix = new Chart(document.getElementById('chartPnlMix'), {
+    type: 'bar',
+    data: { labels: ['PnL Composition'], datasets: [
+      { label: 'Physical Realized', data: [physReal], backgroundColor: COLORS.accent, borderRadius: 6, maxBarThickness: 80 },
+      { label: 'Hedge Realized', data: [hedgeReal], backgroundColor: COLORS.pos, borderRadius: 6, maxBarThickness: 80 },
+      { label: 'Hedge MTM', data: [hedgeMTM], backgroundColor: COLORS.warn, borderRadius: 6, maxBarThickness: 80 },
+    ] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14 } } },
+      scales: { x: { grid: { display: false }, stacked: true }, y: { grid: { color: COLORS.grid }, stacked: true, ticks: { callback: fmtCompact } } } },
+  });
+
+  const metals = [...new Set(data.map(r => r.metal))].filter(Boolean).sort();
+  const nakedByMetal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.nakedExposure)));
+
+  if (charts.naked) charts.naked.destroy();
+  charts.naked = new Chart(document.getElementById('chartNaked'), {
+    type: 'bar',
+    data: { labels: metals,
+      datasets: [{ label: 'Naked Exposure Qty', data: nakedByMetal, backgroundColor: nakedByMetal.map(v => v >= 0 ? COLORS.warn : COLORS.neg), borderRadius: 6, maxBarThickness: 40 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
+  });
+
+  const top = [...data].map(r => ({ lot: r.lot, pnl: r.totalNetRealizedPnL }))
+    .sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 10);
+
+  if (charts.dashTop) charts.dashTop.destroy();
+  charts.dashTop = new Chart(document.getElementById('chartDashTop'), {
+    type: 'bar',
+    data: { labels: top.map(t => t.lot),
+      datasets: [{ label: 'Net Realized PnL', data: top.map(t => t.pnl), backgroundColor: top.map(t => t.pnl >= 0 ? COLORS.pos : COLORS.neg), borderRadius: 6, maxBarThickness: 22 }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } }, y: { grid: { display: false } } } },
+  });
+}
+
+// ============ TABS ============
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ FILE LOADING ============
+document.getElementById('drop').addEventListener('click', () => document.getElementById('file').click());
+document.getElementById('file').addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+const drop = document.getElementById('drop');
+['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) loadFile(f); });
+
+function populateFilter(selectId, values, label = 'Metals') {
+  const el = document.getElementById(selectId);
+  const current = el.value;
+  el.innerHTML = '<option value="">All ' + label + '</option>' + values.map(v => `<option>${v}</option>`).join('');
+  el.value = current;
+}
+
+function loadFile(file) {
+  log('Reading ' + file.name + ' (' + file.size + ' bytes)…');
+  const reader = new FileReader();
+  reader.onerror = () => log('❌ FileReader error: ' + reader.error);
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+      const parsed = readWorkbook(wb);
+
+      PHYS  = buildPhysical(parsed.buys, parsed.sells);
+      HEDGE = buildHedge(parsed.hedge, parsed.live, parsed.buys);
+      DASH  = buildDashboard(PHYS, HEDGE);
+
+      const al1Sells = parsed.sells.filter(s => s.lot === 'AL1');
+      const al1Phys  = PHYS.find(p => p.lot === 'AL1');
+
+      log(`Sheet "${parsed.sheetName}" (header row ${parsed.hdrRow + 1})\n` +
+          `Sells block: ${parsed.pos.sells.start} | Lot col: ${parsed.pos.sells.lot} | Qty col: ${parsed.pos.sells.qty} | Price col: ${parsed.pos.sells.price}\n` +
+          `Parsed → buys=${parsed.buys.length}, sells=${parsed.sells.length}, live=${parsed.live.length}, hedge=${parsed.hedge.length}\n` +
+          `AL1 sells parsed: ${JSON.stringify(al1Sells)}\n` +
+          `AL1 physical: sold=${al1Phys ? al1Phys.physSellQty : 'N/A'}, avgSellPrice=${al1Phys ? al1Phys.physSellPrice.toFixed(2) : 'N/A'}, realized=${al1Phys ? al1Phys.physRealizedPnL.toFixed(2) : 'N/A'}\n` +
+          `✅ Built → Physical=${PHYS.length}, Hedge=${HEDGE.length}, Dashboard=${DASH.length}`);
+
+      const metals = [...new Set([...PHYS.map(r=>r.metal), ...HEDGE.map(r=>r.metal)])].filter(m => m && m !== '—').sort();
+      populateFilter('fMetalPhys', metals);
+      populateFilter('fMetalHedge', metals);
+      populateFilter('fMetalDash', metals);
+
+      document.getElementById('main').style.display = 'block';
+      document.getElementById('export').style.display = 'inline-block';
+
+      renderPhysical();
+      renderHedge();
+      renderDash();
+    } catch (err) {
+      console.error(err);
+      log('❌ ERROR: ' + err.message + '\n' + err.stack);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+['searchPhys','fMetalPhys'].forEach(id => document.getElementById(id).addEventListener('input', renderPhysical));
+['searchHedge','fMetalHedge','fRemark'].forEach(id => document.getElementById(id).addEventListener('input', renderHedge));
+['searchDash','fMetalDash','fInstruction'].forEach(id => document.getElementById(id).addEventListener('input', renderDash));
+
+// ============ EXPORT ============
+document.getElementById('export').addEventListener('click', () => {
+  const wb = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(PHYS.map(r => ({
+    'Lot ID': r.lot, Metal: r.metal, Status: r.physStatus,
+    'Buy Date': fmtD(r.physBuyDate), 'Buy Qty': r.physBuyQty, 'Buy Price': r.physBuyPrice,
+    'Sold Qty': r.physSellQty, 'Sell Price': r.physSellPrice,
+    'In Stock': r.physInStockQty, Unsold: r.physUnpricedQty,
+    'Realized PnL': r.physRealizedPnL,
+  }))), 'Physical');
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(HEDGE.map(r => ({
+    'Lot ID': r.lot, Metal: r.metal,
+    'LME Prompt': fmtD(r.lme.prompt), 'LME Buy': r.lme.buyQty, 'LME Sell': r.lme.sellQty,
+    'LME Net': r.lme.netQty, 'LME MTM': r.lme.mtm, 'LME Realized': r.lme.realized,
+    'MCX Prompt': fmtD(r.mcx.prompt), 'MCX Buy': r.mcx.buyQty, 'MCX Sell': r.mcx.sellQty,
+    'MCX Net': r.mcx.netQty, 'MCX MTM': r.mcx.mtm, 'MCX Realized': r.mcx.realized,
+    'Total Realized': r.totalRealized, Remark: r.remark,
+  }))), 'Hedges');
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DASH.map(r => ({
+    'Lot ID': r.lot, Metal: r.metal, 'Phys Status': r.physStatus,
+    'Phys Buy Date': fmtD(r.physBuyDate), 'Phys Buy Qty': r.physBuyQty, 'Phys Buy Price': r.physBuyPrice,
+    'Phys Sold Qty': r.physSellQty, 'Phys Sell Price': r.physSellPrice,
+    'Phys In Stock': r.physInStockQty, 'Phys Unsold': r.physUnpricedQty,
+    'Phys Realized': r.physRealizedPnL,
+    'LME Prompt': fmtD(r.lmePrompt), 'LME Net': r.lmeNetQty, 'LME MTM': r.lmeMTM, 'LME Realized': r.lmeRealized,
+    'MCX Prompt': fmtD(r.mcxPrompt), 'MCX Net': r.mcxNetQty, 'MCX MTM': r.mcxMTM, 'MCX Realized': r.mcxRealized,
+    'Naked Qty': r.nakedExposure, 'Total MTM': r.totalHedgeMTM, 'Net Realized': r.totalNetRealizedPnL,
+    Instruction: r.instruction,
+  }))), 'Dashboard');
+
+  XLSX.writeFile(wb, 'HedgeBook.xlsx');
+});
+</script>
+</body>
+</html>
