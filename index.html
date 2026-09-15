@@ -42,7 +42,9 @@
   h1 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.2px; }
   .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .header-actions { margin-left: auto; display: flex; gap: 8px; }
+
   .wrap { padding: 28px 32px 60px; max-width: 1800px; margin: 0 auto; }
+
   .drop {
     border: 1.5px dashed var(--border); border-radius: 16px; padding: 60px 24px;
     text-align: center; cursor: pointer; transition: all .2s ease;
@@ -70,6 +72,7 @@
     white-space: pre-wrap; max-height: 180px; overflow: auto; line-height: 1.6;
   }
   .log:empty { display: none; }
+
   .tabs {
     display: flex; gap: 4px; margin: 24px 0 0;
     background: var(--panel); padding: 4px;
@@ -81,15 +84,23 @@
     background: transparent; border: none; color: var(--muted);
     cursor: pointer; font-size: 13px; font-weight: 500;
     font-family: inherit; transition: all .15s ease;
+    position: relative;
   }
   .tab:hover { color: var(--text); background: var(--panel-2); }
   .tab.active {
     background: linear-gradient(135deg, #4f8cff, #3b7de0);
     color: #fff; box-shadow: 0 4px 12px rgba(79,140,255,.3);
   }
+  .tab .tab-badge {
+    display: inline-block; margin-left: 6px;
+    background: var(--neg); color: #fff;
+    border-radius: 999px; padding: 1px 7px;
+    font-size: 10px; font-weight: 700;
+  }
   .tab-panel { display: none; animation: fade .3s ease; }
   .tab-panel.active { display: block; }
   @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
   .cards {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     gap: 14px; margin: 22px 0;
@@ -110,6 +121,78 @@
   .card .subval { font-size: 11px; color: var(--muted-2); margin-top: 4px; }
   .pos { color: var(--pos); }
   .neg { color: var(--neg); }
+
+  /* Alerts */
+  .alerts-wrap {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px 20px; margin-bottom: 22px;
+  }
+  .alerts-hdr {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .alerts-hdr h3 {
+    margin: 0; font-size: 13px; font-weight: 600;
+    color: #c7d2e8; letter-spacing: .2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .alerts-hdr .count-badge {
+    background: rgba(248,113,113,.15); color: #f87171;
+    border: 1px solid rgba(248,113,113,.3);
+    border-radius: 999px; padding: 2px 9px;
+    font-size: 11px; font-weight: 700;
+  }
+  .alerts-hdr .count-badge.ok {
+    background: rgba(52,211,153,.15); color: #34d399;
+    border-color: rgba(52,211,153,.3);
+  }
+  .alerts-toggles { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+  .alert-toggle {
+    background: var(--panel); border: 1px solid var(--border);
+    color: var(--muted); padding: 5px 11px; border-radius: 999px;
+    font-size: 11px; cursor: pointer; font-family: inherit;
+    transition: all .15s;
+  }
+  .alert-toggle:hover { border-color: var(--accent); color: var(--text); }
+  .alert-toggle.on {
+    background: rgba(79,140,255,.12); color: #a7c4ff;
+    border-color: rgba(79,140,255,.4);
+  }
+  .alerts-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow: auto; }
+  .alert-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 10px;
+    background: rgba(248,113,113,.05);
+    border-left: 3px solid var(--neg);
+    cursor: pointer; transition: background .12s;
+    font-size: 12.5px;
+  }
+  .alert-item:hover { background: rgba(248,113,113,.12); }
+  .alert-item.warn { background: rgba(251,191,36,.05); border-left-color: var(--warn); }
+  .alert-item.warn:hover { background: rgba(251,191,36,.12); }
+  .alert-item.info { background: rgba(79,140,255,.05); border-left-color: var(--accent); }
+  .alert-item.info:hover { background: rgba(79,140,255,.12); }
+  .alert-item .a-icon { font-size: 16px; flex-shrink: 0; }
+  .alert-item .a-lot {
+    font-weight: 600; color: #fff; padding: 2px 8px;
+    background: rgba(255,255,255,.05); border-radius: 6px;
+    font-size: 11.5px; flex-shrink: 0;
+  }
+  .alert-item .a-msg { flex: 1; color: #c7d2e8; }
+  .alert-item .a-val { color: var(--muted); font-size: 11.5px; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
+  .alerts-empty { padding: 20px; text-align: center; color: var(--muted-2); font-style: italic; font-size: 12.5px; }
+
+  /* Date range + filters */
+  .filters-bar {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    align-items: center; margin-bottom: 16px;
+    padding: 12px 16px; background: var(--panel);
+    border: 1px solid var(--border); border-radius: 12px;
+  }
+  .filters-bar label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .filters-bar .spacer { flex: 1; }
+
   .charts {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
     gap: 16px; margin-bottom: 22px;
@@ -121,6 +204,7 @@
   }
   .chart-card h3 { margin: 0 0 14px; font-size: 13px; font-weight: 600; color: #c7d2e8; letter-spacing: .2px; }
   .chart-card .canvas-wrap { position: relative; height: 240px; }
+
   .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
   .search-wrap { position: relative; flex: 1; min-width: 240px; max-width: 360px; }
   .search-wrap svg {
@@ -140,12 +224,14 @@
   button:hover { border-color: var(--accent); background: #16223d; }
   button.primary { background: linear-gradient(135deg, #4f8cff, #3b7de0); border-color: transparent; color: #fff; }
   button.primary:hover { background: linear-gradient(135deg, #5f97ff, #4a8bf0); }
+  button.ghost { background: transparent; }
   select {
     appearance: none;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a9ab8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat; background-position: right 10px center;
     padding-right: 30px;
   }
+
   .tablewrap {
     border: 1px solid var(--border); border-radius: 14px; overflow: auto;
     max-height: 72vh; background: var(--panel); box-shadow: var(--shadow);
@@ -161,7 +247,16 @@
     text-transform: uppercase; letter-spacing: .5px;
     padding: 10px 14px; text-align: right;
     border-bottom: 1px solid var(--border); white-space: nowrap;
+    user-select: none;
   }
+  thead th.sortable { cursor: pointer; }
+  thead th.sortable:hover { color: var(--text); background: #1a2a4a; }
+  thead th .sort-arrow {
+    display: inline-block; margin-left: 6px;
+    font-size: 9px; color: var(--accent);
+    transition: opacity .15s;
+  }
+  thead th.sortable .sort-arrow.idle { opacity: .25; color: var(--muted-2); }
   thead th:first-child, tbody td:first-child { text-align: left; }
   thead tr.group th {
     text-align: center; font-size: 10.5px; color: var(--muted);
@@ -176,29 +271,214 @@
     padding: 10px 14px; border-bottom: 1px solid var(--border-soft);
     white-space: nowrap; text-align: right;
   }
+  tbody tr.row-clickable { cursor: pointer; }
   tbody tr { transition: background .12s; }
   tbody tr:hover td { background: #16223d; }
   tbody td:first-child { font-weight: 600; }
   tbody tr:last-child td { border-bottom: none; }
+
+  /* Row status colors (#5) */
+  tbody tr.status-danger td { background: rgba(248,113,113,.04); }
+  tbody tr.status-danger:hover td { background: rgba(248,113,113,.12); }
+  tbody tr.status-danger td:first-child::before {
+    content: ''; display: inline-block; width: 3px; height: 12px;
+    background: var(--neg); border-radius: 2px; margin-right: 8px;
+    vertical-align: middle;
+  }
+  tbody tr.status-warn td { background: rgba(251,191,36,.03); }
+  tbody tr.status-warn:hover td { background: rgba(251,191,36,.1); }
+  tbody tr.status-warn td:first-child::before {
+    content: ''; display: inline-block; width: 3px; height: 12px;
+    background: var(--warn); border-radius: 2px; margin-right: 8px;
+    vertical-align: middle;
+  }
+  tbody tr.status-ok td:first-child::before {
+    content: ''; display: inline-block; width: 3px; height: 12px;
+    background: var(--pos); border-radius: 2px; margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* Sticky totals row (#4) */
+  tfoot tr.totals-row td {
+    position: sticky; bottom: 0; z-index: 2;
+    background: linear-gradient(180deg, #16223d, #0e1830);
+    font-weight: 700; color: #fff; font-size: 12px;
+    border-top: 2px solid var(--accent);
+    border-bottom: none;
+    padding: 11px 14px;
+  }
+  tfoot tr.totals-row td:first-child {
+    position: sticky; left: 0; z-index: 4;
+    background: linear-gradient(180deg, #16223d, #0e1830);
+  }
+
   .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 600; letter-spacing: .3px; }
   .active { background: rgba(251,191,36,.12); color: #fbbf24; border: 1px solid rgba(251,191,36,.25); }
   .sq { background: rgba(52,211,153,.12); color: #34d399; border: 1px solid rgba(52,211,153,.25); }
   .b-danger { background: rgba(248,113,113,.12); color: #f87171; border: 1px solid rgba(248,113,113,.25); }
   .b-info { background: rgba(79,140,255,.12); color: #7fb0ff; border: 1px solid rgba(79,140,255,.25); }
   .b-warn { background: rgba(251,191,36,.12); color: #fbbf24; border: 1px solid rgba(251,191,36,.25); }
+  .b-buy { background: rgba(52,211,153,.12); color: #34d399; border: 1px solid rgba(52,211,153,.25); }
+  .b-sell { background: rgba(248,113,113,.12); color: #f87171; border: 1px solid rgba(248,113,113,.25); }
+
   .metal-chip {
     display: inline-block; padding: 2px 8px;
     background: rgba(79,140,255,.1); color: #a7c4ff;
     border: 1px solid rgba(79,140,255,.2);
     border-radius: 6px; font-size: 11px; font-weight: 500;
   }
+
   thead th:first-child { position: sticky; left: 0; z-index: 3; background: #16223d; }
   tbody td:first-child { position: sticky; left: 0; background: var(--panel); }
   tbody tr:hover td:first-child { background: #16223d; }
+
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #1e2d4d; border-radius: 8px; }
   ::-webkit-scrollbar-thumb:hover { background: #2a3f68; }
+
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 40px 20px;
+    animation: fadeBg .2s ease;
+  }
+  .modal-bg.open { display: flex; }
+  @keyframes fadeBg { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 24px 48px rgba(0,0,0,.5);
+    width: 100%;
+    max-width: 1100px;
+    max-height: 88vh;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    animation: slideUp .25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .modal-hdr {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 16px;
+    background: linear-gradient(180deg, #16223d, #111c33);
+  }
+  .modal-hdr h2 { margin: 0; font-size: 17px; font-weight: 600; }
+  .modal-hdr .m-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .modal-close {
+    margin-left: auto; width: 34px; height: 34px;
+    border-radius: 8px; background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted); font-size: 20px; cursor: pointer;
+    display: grid; place-items: center; padding: 0;
+  }
+  .modal-close:hover { color: var(--neg); border-color: var(--neg); background: transparent; }
+
+  .modal-body { padding: 20px 24px; overflow: auto; flex: 1; }
+
+  .modal-cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px; margin-bottom: 20px;
+  }
+  .modal-card {
+    background: #0e1830; border: 1px solid var(--border-soft);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .modal-card .label { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .modal-card .value { font-size: 18px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+  .modal-section { margin-bottom: 24px; }
+  .modal-section h3 {
+    margin: 0 0 10px; font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .6px; color: #a7b6d4;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .modal-section h3 .count {
+    display: inline-block; padding: 1px 8px; border-radius: 999px;
+    background: rgba(79,140,255,.15); color: #a7c4ff;
+    font-size: 10px; font-weight: 600;
+  }
+
+  .tx-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .tx-table th {
+    text-align: left; padding: 8px 10px;
+    background: #0e1830; color: var(--muted);
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px;
+    font-weight: 600; border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .tx-table th.num, .tx-table td.num { text-align: right; }
+  .tx-table td {
+    padding: 9px 10px; border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+  .tx-table tr:last-child td { border-bottom: none; }
+  .tx-table tr:hover td { background: #16223d; }
+  .tx-table .empty {
+    text-align: center; color: var(--muted-2); padding: 20px;
+    font-style: italic; font-size: 12px;
+  }
+
+  /* ============ PRINT STYLES (#8) ============ */
+  @media print {
+    body {
+      background: #fff !important;
+      color: #000 !important;
+      font-size: 11px !important;
+    }
+    header, .drop, .log, .controls, .filters-bar, .charts,
+    .tabs, .header-actions, button, .modal-bg, .alerts-toggles,
+    .search-wrap, select, input { display: none !important; }
+    .wrap { padding: 0 !important; max-width: 100% !important; }
+    .tab-panel { display: block !important; page-break-after: always; }
+    .tab-panel:not(.active) { display: none !important; }
+    .tablewrap {
+      border: 1px solid #ccc !important;
+      box-shadow: none !important;
+      max-height: none !important;
+      overflow: visible !important;
+      background: #fff !important;
+    }
+    table { font-size: 10px !important; }
+    thead th {
+      background: #f0f0f0 !important;
+      color: #000 !important;
+      border-bottom: 2px solid #999 !important;
+      position: static !important;
+    }
+    tbody td { color: #000 !important; border-bottom: 1px solid #eee !important; position: static !important; }
+    tbody td:first-child { position: static !important; background: transparent !important; }
+    thead th:first-child { position: static !important; background: #f0f0f0 !important; }
+    .pos { color: #0a7f3f !important; }
+    .neg { color: #c00 !important; }
+    .cards { grid-template-columns: repeat(4, 1fr) !important; gap: 6px !important; }
+    .card { border: 1px solid #ccc !important; background: #fff !important; padding: 8px !important; }
+    .card .label { color: #666 !important; }
+    .card .value { color: #000 !important; font-size: 16px !important; }
+    .alerts-wrap { background: #fff !important; border: 1px solid #ccc !important; }
+    .alert-item { background: #f9f9f9 !important; border-left: 3px solid #999 !important; }
+    .alert-item .a-lot { background: #eee !important; color: #000 !important; }
+    .alert-item .a-msg { color: #000 !important; }
+    .alert-item .a-val { color: #333 !important; }
+    tfoot tr.totals-row td {
+      background: #e8e8e8 !important; color: #000 !important;
+      position: static !important; border-top: 2px solid #333 !important;
+    }
+    .metal-chip { background: #eee !important; color: #000 !important; border: 1px solid #ccc !important; }
+    .badge { border: 1px solid #999 !important; background: #fff !important; color: #000 !important; }
+    .status-danger td, .status-warn td { background: #fff !important; }
+    .status-danger td:first-child::before,
+    .status-warn td:first-child::before,
+    .status-ok td:first-child::before { display: none; }
+    @page { margin: 12mm; }
+  }
 </style>
 </head>
 <body>
@@ -212,6 +492,7 @@
     </div>
   </div>
   <div class="header-actions">
+    <button id="print" class="ghost" style="display:none">🖨 Print</button>
     <button id="export" class="primary" style="display:none">⬇ Export Excel</button>
   </div>
 </header>
@@ -228,12 +509,29 @@
   <div id="log" class="log"></div>
 
   <div id="main" style="display:none">
+
+    <!-- ============ ALERTS PANEL (#14) ============ -->
+    <div class="alerts-wrap" id="alertsWrap">
+      <div class="alerts-hdr">
+        <h3>🚨 Alerts <span class="count-badge" id="alertCount">0</span></h3>
+        <div class="alerts-toggles">
+          <button class="alert-toggle on" data-type="hedge">Hedge mismatch</button>
+          <button class="alert-toggle on" data-type="prompt">Near prompt</button>
+          <button class="alert-toggle on" data-type="loss">Big losses</button>
+          <button class="alert-toggle on" data-type="naked">Naked exposure</button>
+          <button class="alert-toggle on" data-type="dncn">CN / DN notes</button>
+        </div>
+      </div>
+      <div class="alerts-list" id="alertsList"></div>
+    </div>
+
     <div class="tabs">
       <button class="tab active" data-tab="physical">Physical</button>
       <button class="tab" data-tab="hedge">Hedges</button>
       <button class="tab" data-tab="dashboard">Dashboard</button>
     </div>
 
+    <!-- PHYSICAL -->
     <div class="tab-panel active" id="tab-physical">
       <div class="cards" id="cards-phys"></div>
       <div class="charts">
@@ -242,28 +540,45 @@
         <div class="chart-card"><h3>In-Stock Qty by Metal</h3><div class="canvas-wrap"><canvas id="chartPhysStock"></canvas></div></div>
         <div class="chart-card"><h3>Buy vs Sell vs In-Stock</h3><div class="canvas-wrap"><canvas id="chartPhysFlow"></canvas></div></div>
       </div>
+      <div class="filters-bar">
+        <label>From</label><input type="date" id="physDateFrom">
+        <label>To</label><input type="date" id="physDateTo">
+        <div class="spacer"></div>
+        <button class="ghost" id="physClear">Clear</button>
+      </div>
       <div class="controls">
         <div class="search-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input id="searchPhys" placeholder="Search Lot ID / Metal / Status…">
+          <input id="searchPhys" placeholder="Search Lot ID / Metal / Status / Buyer / Seller…">
         </div>
         <select id="fMetalPhys"><option value="">All Metals</option></select>
       </div>
       <div class="tablewrap"><table id="tblPhys"></table></div>
     </div>
 
+    <!-- HEDGE -->
     <div class="tab-panel" id="tab-hedge">
       <div class="cards" id="cards-hedge"></div>
       <div class="charts">
         <div class="chart-card"><h3>PnL by Metal — Realized vs Open MTM</h3><div class="canvas-wrap"><canvas id="chartPnl"></canvas></div></div>
         <div class="chart-card"><h3>Position Split — Long vs Short</h3><div class="canvas-wrap"><canvas id="chartPosition"></canvas></div></div>
+        <div class="chart-card"><h3>LME PnL — Realized vs MTM (by Metal)</h3><div class="canvas-wrap"><canvas id="chartLmePnl"></canvas></div></div>
+        <div class="chart-card"><h3>MCX PnL — Realized vs MTM (by Metal)</h3><div class="canvas-wrap"><canvas id="chartMcxPnl"></canvas></div></div>
+        <div class="chart-card"><h3>LME Net Position by Metal</h3><div class="canvas-wrap"><canvas id="chartLmeNet"></canvas></div></div>
+        <div class="chart-card"><h3>MCX Net Position by Metal</h3><div class="canvas-wrap"><canvas id="chartMcxNet"></canvas></div></div>
         <div class="chart-card"><h3>Top 10 Lots by Total PnL</h3><div class="canvas-wrap"><canvas id="chartTopLots"></canvas></div></div>
         <div class="chart-card"><h3>Exposure by Metal &amp; Exchange</h3><div class="canvas-wrap"><canvas id="chartExposure"></canvas></div></div>
+      </div>
+      <div class="filters-bar">
+        <label>From</label><input type="date" id="hedgeDateFrom">
+        <label>To</label><input type="date" id="hedgeDateTo">
+        <div class="spacer"></div>
+        <button class="ghost" id="hedgeClear">Clear</button>
       </div>
       <div class="controls">
         <div class="search-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input id="searchHedge" placeholder="Search Lot ID / Metal…">
+          <input id="searchHedge" placeholder="Search Lot ID / Metal / Exchange…">
         </div>
         <select id="fMetalHedge"><option value="">All Metals</option></select>
         <select id="fRemark">
@@ -275,6 +590,7 @@
       <div class="tablewrap"><table id="tblHedge"></table></div>
     </div>
 
+    <!-- DASHBOARD -->
     <div class="tab-panel" id="tab-dashboard">
       <div class="cards" id="cards-dash"></div>
       <div class="charts">
@@ -282,6 +598,12 @@
         <div class="chart-card"><h3>PnL Composition</h3><div class="canvas-wrap"><canvas id="chartPnlMix"></canvas></div></div>
         <div class="chart-card"><h3>Naked Exposure by Metal</h3><div class="canvas-wrap"><canvas id="chartNaked"></canvas></div></div>
         <div class="chart-card"><h3>Top 10 Lots by Net PnL</h3><div class="canvas-wrap"><canvas id="chartDashTop"></canvas></div></div>
+      </div>
+      <div class="filters-bar">
+        <label>From</label><input type="date" id="dashDateFrom">
+        <label>To</label><input type="date" id="dashDateTo">
+        <div class="spacer"></div>
+        <button class="ghost" id="dashClear">Clear</button>
       </div>
       <div class="controls">
         <div class="search-wrap">
@@ -300,6 +622,19 @@
       </div>
       <div class="tablewrap"><table id="tblDash"></table></div>
     </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modal">
+    <div class="modal-hdr">
+      <div>
+        <h2 id="modalTitle">Lot Details</h2>
+        <div class="m-sub" id="modalSub"></div>
+      </div>
+      <button class="modal-close" id="modalClose">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
 
@@ -338,8 +673,15 @@ const dkey = d => {
 const toDate = d => { const k = dkey(d); return k ? new Date(k + 'T00:00:00Z') : null; };
 const round = (n, p = 6) => Math.round(n * 10 ** p) / 10 ** p;
 const sum = arr => arr.reduce((a, b) => a + (b || 0), 0);
+const escapeHtml = s => String(s == null ? '' : s)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+const daysBetween = (a, b) => {
+  if (!a || !b) return Infinity;
+  return Math.round((b - a) / 86400000);
+};
 
-// ============ COLUMN DETECTION (FIXED) ============
+// ============ COLUMN DETECTION ============
 function detectColumns(header) {
   const findAfter = (name, from = 0) => {
     for (let i = from; i < header.length; i++) if (header[i] === name) return i;
@@ -352,15 +694,12 @@ function detectColumns(header) {
   };
   const allCat = findAll('CAT');
 
-  // BUYS: first CAT with LOT ID next AND BUY QTY within 12 columns
   let buysStart = -1;
   for (const c of allCat) {
     if (header[c + 1] === 'LOT ID' && findAll('BUY QTY').some(i => i > c && i < c + 12)) {
       buysStart = c; break;
     }
   }
-
-  // SELLS: first CAT *after* buysStart with LOT ID next AND SOLD QTY within 12 columns
   let sellsStart = -1;
   for (const c of allCat) {
     if (c <= buysStart) continue;
@@ -368,16 +707,12 @@ function detectColumns(header) {
       sellsStart = c; break;
     }
   }
-
-  // LIVE: METAL → EXCHANGE → PROMPT DATE
   let liveStart = -1;
   for (let i = 0; i < header.length - 2; i++) {
     if (header[i] === 'METAL' && header[i + 1] === 'EXCHANGE' && header[i + 2] === 'PROMPT DATE') {
       liveStart = i; break;
     }
   }
-
-  // HEDGE: DATE → LOT ID → EXCHANGE → PROMPT DATE
   let etStart = -1;
   for (let i = 0; i < header.length - 3; i++) {
     if (header[i] === 'DATE' && header[i + 1] === 'LOT ID' && header[i + 2] === 'EXCHANGE' && header[i + 3] === 'PROMPT DATE') {
@@ -393,12 +728,14 @@ function detectColumns(header) {
     pos.buys.metal = findAfter('METAL',    buysStart);
     pos.buys.qty   = findAfter('BUY QTY',  buysStart);
     pos.buys.price = findAfter('BUY PRICE',buysStart);
+    pos.buys.cat   = findAfter('CAT',      buysStart);
   }
   if (sellsStart >= 0) {
     pos.sells.lot   = findAfter('LOT ID',    sellsStart);
     pos.sells.date  = findAfter('SALE DATE', sellsStart);
     pos.sells.qty   = findAfter('SOLD QTY',  sellsStart);
     pos.sells.price = findAfter('SELL PRICE',sellsStart);
+    pos.sells.cat   = findAfter('CAT',       sellsStart);
   }
   if (liveStart >= 0) {
     pos.live.metal    = findAfter('METAL',        liveStart);
@@ -443,8 +780,6 @@ function readWorkbook(wb) {
 
   dataRows.forEach((r, idx) => {
     if (!r) return;
-
-    // BUYS
     if (pos.buys.start >= 0) {
       const lot = g(r, pos.buys.lot);
       if (lot != null && String(lot).trim() !== '' && norm(lot) !== 'LOT ID') {
@@ -454,35 +789,28 @@ function readWorkbook(wb) {
           metal: g(r, pos.buys.metal),
           qty: num(g(r, pos.buys.qty)),
           price: num(g(r, pos.buys.price)),
+          party: g(r, pos.buys.cat) || '',
         });
       }
     }
-
-    // SELLS
     if (pos.sells.start >= 0) {
       const lot = g(r, pos.sells.lot);
-      const qty = num(g(r, pos.sells.qty));
       if (lot != null && String(lot).trim() !== '' && norm(lot) !== 'LOT ID') {
-        const rec = {
+        sells.push({
           lot: String(lot).trim(),
           date: g(r, pos.sells.date),
-          qty: qty,
+          qty: num(g(r, pos.sells.qty)),
           price: num(g(r, pos.sells.price)),
-        };
-        sells.push(rec);
-        console.log('SELL #' + idx + ':', rec);
+          party: g(r, pos.sells.cat) || '',
+        });
       }
     }
-
-    // LIVE
     if (pos.live.start >= 0) {
       const lm = g(r, pos.live.metal), le = g(r, pos.live.exchange), lp = g(r, pos.live.prompt);
       if (lm != null || le != null || lp != null) {
         live.push({ metal: lm, exchange: le, prompt: lp, settle: num(g(r, pos.live.settle)) });
       }
     }
-
-    // HEDGE
     if (pos.hedge.start >= 0) {
       const lot = g(r, pos.hedge.lot);
       if (lot != null && String(lot).trim() !== '' && norm(lot) !== 'LOT ID') {
@@ -495,37 +823,27 @@ function readWorkbook(wb) {
       }
     }
   });
-
-  // Debug: show sells for AL1
-  console.log('AL1 sells:', sells.filter(s => s.lot === 'AL1'));
-
   return { buys, sells, live, hedge, sheetName, hdrRow, pos };
 }
 
-// ============ PHYSICAL TRACKER ============
-// Merge by Lot ID: buy (1 per lot) + all sells for that lot
+// ============ PHYSICAL ============
 function buildPhysical(buys, sells) {
   const sellsByLot = {};
   sells.forEach(s => {
     const lot = String(s.lot).trim();
-    const q = nz(s.qty);
-    const p = nz(s.price);
+    const q = nz(s.qty), p = nz(s.price);
     if (!sellsByLot[lot]) sellsByLot[lot] = { qty: 0, value: 0, count: 0 };
-    sellsByLot[lot].qty   += q;
+    sellsByLot[lot].qty += q;
     sellsByLot[lot].value += p * q;
     sellsByLot[lot].count += 1;
   });
 
-  console.log('sellsByLot AL1:', sellsByLot['AL1']);
-
   return buys.map(b => {
     const lot = String(b.lot).trim();
     const s = sellsByLot[lot] || { qty: 0, value: 0, count: 0 };
-    const QtyB = nz(b.qty);
-    const QtyS = s.qty;
-    const BuyP  = nz(b.price);
+    const QtyB = nz(b.qty), QtyS = s.qty;
+    const BuyP = nz(b.price);
     const SellP = QtyS > 0 ? (s.value / QtyS) : 0;
-
     const InStock = QtyB - QtyS;
     const Realized = QtyS > 0 ? (SellP - BuyP) * QtyS : 0;
     const Unpriced = InStock;
@@ -536,6 +854,11 @@ function buildPhysical(buys, sells) {
     else if (QtyS === QtyB)      Status = 'CLOSED';
     else                         Status = 'Over-Sold';
 
+    // party names aggregated
+    const buyerNames = [...new Set([b.party].filter(Boolean))];
+    const sellersForLot = sells.filter(x => String(x.lot).trim() === lot).map(x => x.party).filter(Boolean);
+    const sellerNames = [...new Set(sellersForLot)];
+
     return {
       lot, metal: b.metal, physStatus: Status,
       physBuyDate: toDate(b.date),
@@ -543,11 +866,14 @@ function buildPhysical(buys, sells) {
       physSellQty: QtyS, physSellPrice: SellP,
       physInStockQty: InStock, physUnpricedQty: Unpriced,
       physRealizedPnL: Realized,
+      buyerNames, sellerNames,
+      buyerSearch: buyerNames.join(' ').toLowerCase(),
+      sellerSearch: sellerNames.join(' ').toLowerCase(),
     };
   });
 }
 
-// ============ HEDGE TRACKER ============
+// ============ HEDGE ============
 function buildHedge(hedge, live, buys) {
   const metalByLot = {};
   buys.forEach(b => { const k = String(b.lot).trim(); if (k) metalByLot[k] = b.metal; });
@@ -566,7 +892,8 @@ function buildHedge(hedge, live, buys) {
     return {
       lot: lotKey, metal, exchange: norm(h.exchange), action: norm(h.action),
       qty: h.qty || 0, finalPrice: h.finalPrice || 0, fxRate: h.fxRate || 0,
-      prompt: toDate(h.prompt), settle: liveMap[key] ?? null,
+      prompt: toDate(h.prompt), tradeDate: toDate(h.date),
+      settle: liveMap[key] ?? null,
     };
   }).filter(r => r.action === 'BUY' || r.action === 'SELL');
 
@@ -626,11 +953,15 @@ function buildHedge(hedge, live, buys) {
       };
     };
     const netTotal = g.reduce((s, x) => s + x.netV, 0);
+    // earliest trade date for date filter
+    const tradeDates = g.map(x => x.tradeDate).filter(Boolean).sort((a,b) => a - b);
     return {
       lot, metal: metal || '—',
       lme: section('LME'), mcx: section('MCX'),
       totalRealized: g.reduce((s, x) => s + x.realized, 0),
       totalMTM: g.reduce((s, x) => s + x.mtm, 0),
+      firstTradeDate: tradeDates[0] || null,
+      lastTradeDate: tradeDates[tradeDates.length-1] || null,
       remark: Math.abs(netTotal) < 0.0001 ? 'Hedge Squared Off' : 'Hedge Active',
     };
   }).filter(r => r.lme.buyQty || r.lme.sellQty || r.mcx.buyQty || r.mcx.sellQty);
@@ -650,7 +981,6 @@ function buildDashboard(physical, hedge) {
     const LN_Real = h ? h.lme.realized : 0;
     const MN_Real = h ? h.mcx.realized : 0;
     const TotalHReal = h ? h.totalRealized : 0;
-
     const TotalHMTM = LN_MTM + MN_MTM;
     const PhysReal = p.physRealizedPnL || 0;
     const Naked = p.physInStockQty + LN + MN;
@@ -673,27 +1003,258 @@ function buildDashboard(physical, hedge) {
       nakedExposure: Naked, totalHedgeMTM: TotalHMTM,
       totalNetRealizedPnL: PhysReal + TotalHReal,
       instruction: Instruction,
+      buyerSearch: p.buyerSearch, sellerSearch: p.sellerSearch,
     };
   });
 }
 
 // ============ STATE ============
 let PHYS = [], HEDGE = [], DASH = [];
+let RAW_BUYS = [], RAW_SELLS = [], RAW_HEDGE = [], RAW_LIVE = [];
+let ALERTS = [];
+const alertToggles = { hedge: true, prompt: true, loss: true, naked: true, dncn: true };
+
+const sortState = {
+  physical: { key: null, dir: 1 },
+  hedge:    { key: null, dir: 1 },
+  dashboard:{ key: null, dir: 1 },
+};
+
 const logEl = document.getElementById('log');
 const log = msg => { logEl.textContent = msg; console.log(msg); };
 const fmt  = (n, d = 2) => (n == null || isNaN(n)) ? '—' : Number(n).toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
 const fmtD = d => d ? new Date(d).toISOString().slice(0, 10) : '—';
 const pnlClass = n => n > 0 ? 'pos' : n < 0 ? 'neg' : '';
 
+// ============ ALERTS (#14) ============
+function buildAlerts() {
+  ALERTS = [];
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  // Index hedge by lot
+  const hedgeByLot = {};
+  HEDGE.forEach(h => { hedgeByLot[h.lot] = h; });
+
+  PHYS.forEach(p => {
+    const h = hedgeByLot[p.lot] || null;
+
+    // 1. Hedge mismatch — physical direction and hedge net direction
+    if (h) {
+      const physNet = p.physInStockQty; // positive = long physical
+      const hedgeNet = (h.lme.netQty || 0) + (h.mcx.netQty || 0);
+      // A hedge should be roughly opposite of physical long/short. Mismatch if same sign and both non-zero
+      if (Math.abs(physNet) > 0.001 && Math.abs(hedgeNet) > 0.001) {
+        if (Math.sign(physNet) === Math.sign(hedgeNet)) {
+          ALERTS.push({
+            type: 'hedge', severity: 'danger',
+            lot: p.lot, metal: p.metal,
+            msg: `Hedge direction wrong: physical ${physNet > 0 ? 'long' : 'short'} ${physNet}, hedge net ${hedgeNet}`,
+            val: `${hedgeNet}`,
+          });
+        }
+      }
+    }
+
+    // 2. Naked exposure (physical in-stock + net hedge ≠ 0)
+    if (h) {
+      const naked = p.physInStockQty + (h.lme.netQty || 0) + (h.mcx.netQty || 0);
+      if (Math.abs(naked) > 0.001) {
+        ALERTS.push({
+          type: 'naked', severity: naked > 0 ? 'warn' : 'warn',
+          lot: p.lot, metal: p.metal,
+          msg: `Naked exposure ${naked > 0 ? 'under-hedged' : 'over-hedged'} by ${fmt(Math.abs(naked), 0)}`,
+          val: `${naked}`,
+        });
+      }
+    }
+
+    // 3. Big loss
+    const totalPnL = p.physRealizedPnL + (h ? h.totalRealized : 0);
+    if (totalPnL < -50000) {
+      ALERTS.push({
+        type: 'loss', severity: 'danger',
+        lot: p.lot, metal: p.metal,
+        msg: `Large realized loss on this lot`,
+        val: fmt(totalPnL),
+      });
+    }
+
+    // 4. Near prompt date (within 3 days)
+    if (h) {
+      const prompt = h.mcx.prompt || h.lme.prompt;
+      if (prompt) {
+        const days = daysBetween(today, new Date(prompt));
+        if (days >= 0 && days <= 3) {
+          ALERTS.push({
+            type: 'prompt', severity: days <= 1 ? 'danger' : 'warn',
+            lot: p.lot, metal: p.metal,
+            msg: `Prompt date in ${days} day${days!==1?'s':''} (${fmtD(prompt)})`,
+            val: `${days}d`,
+          });
+        }
+      }
+    }
+
+    // 5. CN/DN note present (extract from Status string)
+    if (p.physStatus && (p.physStatus.includes('CN_Amt') || p.physStatus.includes('DN_Amt'))) {
+      const cnMatch = p.physStatus.match(/CN_Amt:\s*([\d.]+)/);
+      const dnMatch = p.physStatus.match(/DN_Amt:\s*([\d.]+)/);
+      ALERTS.push({
+        type: 'dncn', severity: 'info',
+        lot: p.lot, metal: p.metal,
+        msg: cnMatch ? `Credit note pending` : `Debit note pending`,
+        val: cnMatch ? cnMatch[1] : dnMatch ? dnMatch[1] : '',
+      });
+    }
+  });
+
+  renderAlerts();
+}
+
+function renderAlerts() {
+  const list = document.getElementById('alertsList');
+  const visible = ALERTS.filter(a => alertToggles[a.type]);
+  const badge = document.getElementById('alertCount');
+  const dangerCount = visible.filter(a => a.severity === 'danger').length;
+
+  badge.textContent = visible.length;
+  badge.className = 'count-badge' + (visible.length === 0 ? ' ok' : '');
+
+  if (visible.length === 0) {
+    list.innerHTML = '<div class="alerts-empty">✅ No alerts — everything looks fine</div>';
+    return;
+  }
+
+  const icons = {
+    hedge: '⚠️', prompt: '⏰', loss: '📉', naked: '🚨', dncn: '📄'
+  };
+
+  list.innerHTML = visible.map(a => {
+    const cls = a.severity === 'danger' ? '' : a.severity === 'warn' ? 'warn' : 'info';
+    return `<div class="alert-item ${cls}" data-lot="${escapeHtml(a.lot)}">
+      <span class="a-icon">${icons[a.type] || '•'}</span>
+      <span class="a-lot">${escapeHtml(a.lot)}</span>
+      <span class="a-msg">${escapeHtml(a.msg)}</span>
+      ${a.val ? `<span class="a-val">${escapeHtml(a.val)}</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
+document.querySelectorAll('.alert-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = btn.dataset.type;
+    alertToggles[t] = !alertToggles[t];
+    btn.classList.toggle('on', alertToggles[t]);
+    renderAlerts();
+  });
+});
+
+// Click on alert opens the lot modal
+document.getElementById('alertsList').addEventListener('click', e => {
+  const item = e.target.closest('.alert-item');
+  if (!item) return;
+  const lot = item.dataset.lot;
+  if (lot) openLotModal(lot);
+});
+
+// ============ SORTING (#3) ============
+function applySort(rows, tab, getters) {
+  const s = sortState[tab];
+  if (!s.key) return rows;
+  const getVal = getters[s.key] || (r => r[s.key]);
+  return [...rows].sort((a, b) => {
+    const va = getVal(a), vb = getVal(b);
+    if (va == null) return 1;
+    if (vb == null) return -1;
+    if (typeof va === 'string') return va.localeCompare(vb) * s.dir;
+    return (va - vb) * s.dir;
+  });
+}
+
+function toggleSort(tab, key) {
+  const s = sortState[tab];
+  if (s.key === key) s.dir = -s.dir;
+  else { s.key = key; s.dir = 1; }
+  if (tab === 'physical') renderPhysical();
+  else if (tab === 'hedge') renderHedge();
+  else renderDash();
+}
+
+function sortArrow(tab, key) {
+  const s = sortState[tab];
+  if (s.key !== key) return `<span class="sort-arrow idle">▼</span>`;
+  return `<span class="sort-arrow">${s.dir === 1 ? '▲' : '▼'}</span>`;
+}
+
+// ============ STATUS COLOR RULES (#5) ============
+function physStatusClass(r) {
+  // Danger: unpriced buy or over-sold
+  if (r.physStatus.startsWith('Over-Sold')) return 'status-danger';
+  // Warning: partial stock or unsold
+  if (r.physStatus.startsWith('Open Stock')) return 'status-warn';
+  // OK: closed
+  if (r.physStatus.startsWith('CLOSED')) return 'status-ok';
+  return '';
+}
+
+function hedgeStatusClass(r) {
+  // Danger: heavy loss
+  if (r.totalRealized + r.totalMTM < -50000) return 'status-danger';
+  // Warning: active hedge
+  if (r.remark === 'Hedge Active') return 'status-warn';
+  // OK: squared off
+  if (r.remark === 'Hedge Squared Off') return 'status-ok';
+  return '';
+}
+
+function dashStatusClass(r) {
+  if (r.instruction.includes('UNDER') || r.instruction.includes('OVER')) return 'status-danger';
+  if (r.instruction.includes('FULLY')) return 'status-ok';
+  if (r.instruction.includes('MOVE')) return 'status-warn';
+  return '';
+}
+
 // ============ RENDER: PHYSICAL ============
 function renderPhysical() {
   const q  = document.getElementById('searchPhys').value.toLowerCase();
   const fm = document.getElementById('fMetalPhys').value;
-  const filtered = PHYS.filter(r =>
-    (!q || (r.lot + ' ' + (r.metal||'') + ' ' + (r.physStatus||'')).toLowerCase().includes(q)) &&
-    (!fm || r.metal === fm)
-  );
+  const from = document.getElementById('physDateFrom').value;
+  const to   = document.getElementById('physDateTo').value;
 
+  let filtered = PHYS.filter(r => {
+    if (fm && r.metal !== fm) return false;
+    if (from) {
+      const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : '';
+      if (!d || d < from) return false;
+    }
+    if (to) {
+      const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : '';
+      if (!d || d > to) return false;
+    }
+    if (q) {
+      const hay = (r.lot + ' ' + (r.metal||'') + ' ' + (r.physStatus||'') + ' ' +
+                   (r.buyerSearch||'') + ' ' + (r.sellerSearch||'')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  filtered = applySort(filtered, 'physical', {
+    'lot': r => r.lot,
+    'metal': r => r.metal,
+    'physBuyDate': r => r.physBuyDate?.getTime() || 0,
+    'physBuyQty': r => r.physBuyQty,
+    'physBuyPrice': r => r.physBuyPrice,
+    'physSellQty': r => r.physSellQty,
+    'physSellPrice': r => r.physSellPrice,
+    'physInStockQty': r => r.physInStockQty,
+    'physUnpricedQty': r => r.physUnpricedQty,
+    'physRealizedPnL': r => r.physRealizedPnL,
+    'physStatus': r => r.physStatus,
+  });
+
+  // Cards
   const totalReal = sum(filtered.map(r => r.physRealizedPnL));
   const totalStock = sum(filtered.map(r => r.physInStockQty));
   const totalSold = sum(filtered.map(r => r.physSellQty));
@@ -722,10 +1283,13 @@ function renderPhysical() {
     { k: 'physStatus', label: 'Status' },
   ];
 
-  let headHtml = '<thead><tr>' + cols.map(c => `<th>${c.label}</th>`).join('') + '</tr></thead>';
+  let headHtml = '<thead><tr>' + cols.map(c =>
+    `<th class="sortable" data-sort-tab="physical" data-sort-key="${c.k}">${c.label}${sortArrow('physical', c.k)}</th>`
+  ).join('') + '</tr></thead>';
+
   let bodyHtml = '<tbody>';
   filtered.forEach(r => {
-    bodyHtml += '<tr>';
+    bodyHtml += `<tr class="row-clickable ${physStatusClass(r)}" data-lot="${escapeHtml(r.lot)}" data-tab="physical">`;
     cols.forEach(c => {
       const v = r[c.k];
       if (c.chip) bodyHtml += `<td><span class="metal-chip">${v || '—'}</span></td>`;
@@ -739,7 +1303,23 @@ function renderPhysical() {
     bodyHtml += '</tr>';
   });
   bodyHtml += '</tbody>';
-  document.getElementById('tblPhys').innerHTML = headHtml + bodyHtml;
+
+  // Totals footer
+  const totalRow = `<tfoot><tr class="totals-row">
+    <td>Total (${filtered.length} lots)</td>
+    <td></td>
+    <td></td>
+    <td>${fmt(totalBought, 0)}</td>
+    <td></td>
+    <td>${fmt(totalSold, 0)}</td>
+    <td></td>
+    <td>${fmt(totalStock, 0)}</td>
+    <td class="${pnlClass(unpriced)}">${fmt(unpriced, 0)}</td>
+    <td class="${pnlClass(totalReal)}">${fmt(totalReal)}</td>
+    <td></td>
+  </tr></tfoot>`;
+
+  document.getElementById('tblPhys').innerHTML = headHtml + bodyHtml + totalRow;
   renderPhysicalCharts(filtered);
 }
 
@@ -748,11 +1328,40 @@ function renderHedge() {
   const q  = document.getElementById('searchHedge').value.toLowerCase();
   const fm = document.getElementById('fMetalHedge').value;
   const fr = document.getElementById('fRemark').value;
-  const filtered = HEDGE.filter(r =>
-    (!q || (r.lot + ' ' + r.metal).toLowerCase().includes(q)) &&
-    (!fm || r.metal === fm) &&
-    (!fr || r.remark === fr)
-  );
+  const from = document.getElementById('hedgeDateFrom').value;
+  const to   = document.getElementById('hedgeDateTo').value;
+
+  let filtered = HEDGE.filter(r => {
+    if (fm && r.metal !== fm) return false;
+    if (fr && r.remark !== fr) return false;
+    if (from) {
+      const d = r.lastTradeDate ? r.lastTradeDate.toISOString().slice(0,10) : '';
+      if (!d || d < from) return false;
+    }
+    if (to) {
+      const d = r.lastTradeDate ? r.lastTradeDate.toISOString().slice(0,10) : '';
+      if (!d || d > to) return false;
+    }
+    if (q) {
+      const hay = (r.lot + ' ' + r.metal).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  filtered = applySort(filtered, 'hedge', {
+    'lot': r => r.lot,
+    'metal': r => r.metal,
+    'lme.netQty': r => r.lme.netQty,
+    'lme.mtm': r => r.lme.mtm,
+    'lme.realized': r => r.lme.realized,
+    'mcx.netQty': r => r.mcx.netQty,
+    'mcx.mtm': r => r.mcx.mtm,
+    'mcx.realized': r => r.mcx.realized,
+    'totalRealized': r => r.totalRealized,
+    'totalMTM': r => r.totalMTM,
+    'remark': r => r.remark,
+  });
 
   const totalReal = sum(filtered.map(r => r.totalRealized));
   const totalMTM  = sum(filtered.map(r => r.totalMTM));
@@ -801,12 +1410,18 @@ function renderHedge() {
   headHtml += '<th colspan="10" class="mcx-g">MCX</th>';
   headHtml += '<th colspan="2"></th>';
   headHtml += '</tr><tr>';
-  cols.forEach(c => { headHtml += `<th>${c.group ? c.group : c.label}</th>`; });
+  cols.forEach(c => {
+    if (c.group) {
+      headHtml += `<th>${c.group}</th>`;
+    } else {
+      headHtml += `<th class="sortable" data-sort-tab="hedge" data-sort-key="${c.k}">${c.label}${sortArrow('hedge', c.k)}</th>`;
+    }
+  });
   headHtml += '</tr></thead>';
 
   let bodyHtml = '<tbody>';
   filtered.forEach(r => {
-    bodyHtml += '<tr>';
+    bodyHtml += `<tr class="row-clickable ${hedgeStatusClass(r)}" data-lot="${escapeHtml(r.lot)}" data-tab="hedge">`;
     cols.forEach(c => {
       if (c.group) return;
       const v = get(r, c.k);
@@ -823,7 +1438,26 @@ function renderHedge() {
     bodyHtml += '</tr>';
   });
   bodyHtml += '</tbody>';
-  document.getElementById('tblHedge').innerHTML = headHtml + bodyHtml;
+
+  const lmeRealTotal = sum(filtered.map(r => r.lme.realized));
+  const lmeMtmTotal = sum(filtered.map(r => r.lme.mtm));
+  const mcxRealTotal = sum(filtered.map(r => r.mcx.realized));
+  const mcxMtmTotal = sum(filtered.map(r => r.mcx.mtm));
+  const totalRow = `<tfoot><tr class="totals-row">
+    <td>Total (${filtered.length})</td>
+    <td></td>
+    <td></td><td></td><td></td><td></td><td></td><td></td>
+    <td></td>
+    <td class="${pnlClass(lmeRealTotal)}">${fmt(lmeRealTotal)}</td>
+    <td class="${pnlClass(lmeMtmTotal)}">${fmt(lmeMtmTotal)}</td>
+    <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+    <td class="${pnlClass(mcxRealTotal)}">${fmt(mcxRealTotal)}</td>
+    <td class="${pnlClass(mcxMtmTotal)}">${fmt(mcxMtmTotal)}</td>
+    <td class="${pnlClass(totalReal)}">${fmt(totalReal)}</td>
+    <td></td>
+  </tr></tfoot>`;
+
+  document.getElementById('tblHedge').innerHTML = headHtml + bodyHtml + totalRow;
   renderHedgeCharts(filtered);
 }
 
@@ -832,11 +1466,43 @@ function renderDash() {
   const q  = document.getElementById('searchDash').value.toLowerCase();
   const fm = document.getElementById('fMetalDash').value;
   const fi = document.getElementById('fInstruction').value;
-  const filtered = DASH.filter(r =>
-    (!q || (r.lot + ' ' + (r.metal||'') + ' ' + (r.instruction||'')).toLowerCase().includes(q)) &&
-    (!fm || r.metal === fm) &&
-    (!fi || r.instruction === fi)
-  );
+  const from = document.getElementById('dashDateFrom').value;
+  const to   = document.getElementById('dashDateTo').value;
+
+  let filtered = DASH.filter(r => {
+    if (fm && r.metal !== fm) return false;
+    if (fi && r.instruction !== fi) return false;
+    if (from) {
+      const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : '';
+      if (!d || d < from) return false;
+    }
+    if (to) {
+      const d = r.physBuyDate ? r.physBuyDate.toISOString().slice(0,10) : '';
+      if (!d || d > to) return false;
+    }
+    if (q) {
+      const hay = (r.lot + ' ' + (r.metal||'') + ' ' + (r.instruction||'') + ' ' +
+                   (r.buyerSearch||'') + ' ' + (r.sellerSearch||'')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  filtered = applySort(filtered, 'dashboard', {
+    'lot': r => r.lot,
+    'metal': r => r.metal,
+    'physRealizedPnL': r => r.physRealizedPnL,
+    'lmeNetQty': r => r.lmeNetQty,
+    'lmeMTM': r => r.lmeMTM,
+    'lmeRealized': r => r.lmeRealized,
+    'mcxNetQty': r => r.mcxNetQty,
+    'mcxMTM': r => r.mcxMTM,
+    'mcxRealized': r => r.mcxRealized,
+    'nakedExposure': r => r.nakedExposure,
+    'totalHedgeMTM': r => r.totalHedgeMTM,
+    'totalNetRealizedPnL': r => r.totalNetRealizedPnL,
+    'instruction': r => r.instruction,
+  });
 
   const totalNetReal = sum(filtered.map(r => r.totalNetRealizedPnL));
   const totalHedgeMTM = sum(filtered.map(r => r.totalHedgeMTM));
@@ -895,12 +1561,18 @@ function renderDash() {
     } else { headHtml += `<th></th>`; i++; }
   }
   headHtml += '</tr><tr>';
-  cols.forEach(c => { headHtml += `<th>${c.group ? c.group : c.label}</th>`; });
+  cols.forEach(c => {
+    if (c.group) {
+      headHtml += `<th>${c.group}</th>`;
+    } else {
+      headHtml += `<th class="sortable" data-sort-tab="dashboard" data-sort-key="${c.k}">${c.label}${sortArrow('dashboard', c.k)}</th>`;
+    }
+  });
   headHtml += '</tr></thead>';
 
   let bodyHtml = '<tbody>';
   filtered.forEach(r => {
-    bodyHtml += '<tr>';
+    bodyHtml += `<tr class="row-clickable ${dashStatusClass(r)}" data-lot="${escapeHtml(r.lot)}" data-tab="dashboard">`;
     cols.forEach(c => {
       if (c.group) return;
       const v = get(r, c.k);
@@ -920,9 +1592,145 @@ function renderDash() {
     bodyHtml += '</tr>';
   });
   bodyHtml += '</tbody>';
-  document.getElementById('tblDash').innerHTML = headHtml + bodyHtml;
+
+  const totalRow = `<tfoot><tr class="totals-row">
+    <td>Total (${filtered.length})</td>
+    <td></td>
+    <td></td><td></td><td></td><td></td><td></td>
+    <td>${fmt(sum(filtered.map(r=>r.physInStockQty)), 0)}</td>
+    <td class="${pnlClass(sum(filtered.map(r=>r.physRealizedPnL)))}">${fmt(sum(filtered.map(r=>r.physRealizedPnL)))}</td>
+    <td></td>
+    <td></td>
+    <td>${fmt(sum(filtered.map(r=>r.lmeNetQty)), 0)}</td>
+    <td class="${pnlClass(sum(filtered.map(r=>r.lmeMTM)))}">${fmt(sum(filtered.map(r=>r.lmeMTM)))}</td>
+    <td class="${pnlClass(sum(filtered.map(r=>r.lmeRealized)))}">${fmt(sum(filtered.map(r=>r.lmeRealized)))}</td>
+    <td></td>
+    <td></td>
+    <td>${fmt(sum(filtered.map(r=>r.mcxNetQty)), 0)}</td>
+    <td class="${pnlClass(sum(filtered.map(r=>r.mcxMTM)))}">${fmt(sum(filtered.map(r=>r.mcxMTM)))}</td>
+    <td class="${pnlClass(sum(filtered.map(r=>r.mcxRealized)))}">${fmt(sum(filtered.map(r=>r.mcxRealized)))}</td>
+    <td></td>
+    <td class="${pnlClass(totalNaked)}">${fmt(totalNaked, 0)}</td>
+    <td class="${pnlClass(totalHedgeMTM)}">${fmt(totalHedgeMTM)}</td>
+    <td class="${pnlClass(totalNetReal)}">${fmt(totalNetReal)}</td>
+    <td></td>
+  </tr></tfoot>`;
+
+  document.getElementById('tblDash').innerHTML = headHtml + bodyHtml + totalRow;
   renderDashCharts(filtered);
 }
+
+// ============ MODAL ============
+const modalBg = document.getElementById('modalBg');
+const modalTitle = document.getElementById('modalTitle');
+const modalSub = document.getElementById('modalSub');
+const modalBody = document.getElementById('modalBody');
+
+document.getElementById('modalClose').onclick = () => modalBg.classList.remove('open');
+modalBg.addEventListener('click', e => { if (e.target === modalBg) modalBg.classList.remove('open'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') modalBg.classList.remove('open'); });
+
+function openLotModal(lotId) {
+  const buys  = RAW_BUYS.filter(b => String(b.lot).trim() === lotId);
+  const sells = RAW_SELLS.filter(s => String(s.lot).trim() === lotId);
+  const hedges = RAW_HEDGE.filter(h => String(h.lot).trim() === lotId);
+  const metal = buys[0]?.metal || hedges[0]?.metal || '—';
+
+  modalTitle.textContent = `Lot ${lotId}`;
+  modalSub.textContent = `${metal} · ${buys.length} buy${buys.length!==1?'s':''}, ${sells.length} sell${sells.length!==1?'s':''}, ${hedges.length} hedge trade${hedges.length!==1?'s':''}`;
+
+  const totalBuyQty  = sum(buys.map(b => nz(b.qty)));
+  const totalSellQty = sum(sells.map(s => nz(s.qty)));
+  const buyValue     = sum(buys.map(b => nz(b.qty) * nz(b.price)));
+  const sellValue    = sum(sells.map(s => nz(s.qty) * nz(s.price)));
+  const avgBuy  = totalBuyQty  ? buyValue  / totalBuyQty  : 0;
+  const avgSell = totalSellQty ? sellValue / totalSellQty : 0;
+  const inStock = totalBuyQty - totalSellQty;
+  const realized = (avgSell - avgBuy) * totalSellQty;
+
+  let html = `
+    <div class="modal-cards">
+      <div class="modal-card"><div class="label">Buy Qty</div><div class="value">${fmt(totalBuyQty, 0)}</div></div>
+      <div class="modal-card"><div class="label">Sold Qty</div><div class="value">${fmt(totalSellQty, 0)}</div></div>
+      <div class="modal-card"><div class="label">In Stock</div><div class="value">${fmt(inStock, 0)}</div></div>
+      <div class="modal-card"><div class="label">Avg Buy Price</div><div class="value">${fmt(avgBuy)}</div></div>
+      <div class="modal-card"><div class="label">Avg Sell Price</div><div class="value">${fmt(avgSell)}</div></div>
+      <div class="modal-card"><div class="label">Realized PnL</div><div class="value ${pnlClass(realized)}">${fmt(realized)}</div></div>
+    </div>
+  `;
+
+  html += `<div class="modal-section"><h3>Buy Transactions <span class="count">${buys.length}</span></h3>`;
+  html += `<table class="tx-table"><thead><tr>
+    <th>Date</th><th>Buyer (CAT)</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Value</th>
+  </tr></thead><tbody>`;
+  if (buys.length === 0) html += `<tr><td colspan="5" class="empty">No buy transactions</td></tr>`;
+  buys.forEach(b => {
+    html += `<tr>
+      <td>${escapeHtml(fmtD(b.date))}</td>
+      <td>${escapeHtml(b.party || '—')}</td>
+      <td class="num">${fmt(nz(b.qty), 0)}</td>
+      <td class="num">${fmt(nz(b.price))}</td>
+      <td class="num">${fmt(nz(b.qty) * nz(b.price))}</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div>`;
+
+  html += `<div class="modal-section"><h3>Sell Transactions <span class="count">${sells.length}</span></h3>`;
+  html += `<table class="tx-table"><thead><tr>
+    <th>Date</th><th>Seller (CAT)</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Value</th>
+  </tr></thead><tbody>`;
+  if (sells.length === 0) html += `<tr><td colspan="5" class="empty">No sell transactions</td></tr>`;
+  sells.forEach(s => {
+    html += `<tr>
+      <td>${escapeHtml(fmtD(s.date))}</td>
+      <td>${escapeHtml(s.party || '—')}</td>
+      <td class="num">${fmt(nz(s.qty), 0)}</td>
+      <td class="num">${fmt(nz(s.price))}</td>
+      <td class="num">${fmt(nz(s.qty) * nz(s.price))}</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div>`;
+
+  html += `<div class="modal-section"><h3>Hedge Transactions <span class="count">${hedges.length}</span></h3>`;
+  html += `<table class="tx-table"><thead><tr>
+    <th>Trade Date</th><th>Exchange</th><th>Action</th><th>Prompt Date</th>
+    <th class="num">Qty</th><th class="num">Final Price</th><th class="num">FX Rate</th><th class="num">Value</th>
+  </tr></thead><tbody>`;
+  if (hedges.length === 0) html += `<tr><td colspan="8" class="empty">No hedge transactions</td></tr>`;
+  hedges.forEach(h => {
+    const act = norm(h.action);
+    const actCls = act === 'BUY' ? 'b-buy' : act === 'SELL' ? 'b-sell' : 'b-info';
+    const value = nz(h.qty) * nz(h.finalPrice) * (norm(h.exchange) === 'LME' ? (nz(h.fxRate) || 1) : 1);
+    html += `<tr>
+      <td>${escapeHtml(fmtD(h.date))}</td>
+      <td>${escapeHtml(norm(h.exchange) || '—')}</td>
+      <td><span class="badge ${actCls}">${escapeHtml(act)}</span></td>
+      <td>${escapeHtml(fmtD(h.prompt))}</td>
+      <td class="num">${fmt(nz(h.qty), 0)}</td>
+      <td class="num">${fmt(nz(h.finalPrice))}</td>
+      <td class="num">${h.fxRate ? fmt(nz(h.fxRate)) : '—'}</td>
+      <td class="num">${fmt(value)}</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div>`;
+
+  modalBody.innerHTML = html;
+  modalBg.classList.add('open');
+}
+
+document.addEventListener('click', e => {
+  // Sort toggle
+  const th = e.target.closest('th.sortable');
+  if (th) {
+    toggleSort(th.dataset.sortTab, th.dataset.sortKey);
+    return;
+  }
+  // Row drilldown
+  const tr = e.target.closest('tr.row-clickable');
+  if (!tr) return;
+  const lot = tr.dataset.lot;
+  if (lot) openLotModal(lot);
+});
 
 // ============ CHARTS ============
 let charts = {};
@@ -1020,9 +1828,60 @@ function renderHedgeCharts(data) {
       scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
   });
 
+  const lmeReal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.lme.realized)));
+  const lmeMTM  = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.lme.mtm)));
+  if (charts.lmePnl) charts.lmePnl.destroy();
+  charts.lmePnl = new Chart(document.getElementById('chartLmePnl'), {
+    type: 'bar',
+    data: { labels: metals, datasets: [
+      { label: 'LME Realized', data: lmeReal, backgroundColor: COLORS.lme, borderRadius: 6, maxBarThickness: 40 },
+      { label: 'LME Open MTM', data: lmeMTM, backgroundColor: '#a5c8ff', borderRadius: 6, maxBarThickness: 40 },
+    ] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14 } } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
+  });
+
+  const mcxReal = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.mcx.realized)));
+  const mcxMTM  = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.mcx.mtm)));
+  if (charts.mcxPnl) charts.mcxPnl.destroy();
+  charts.mcxPnl = new Chart(document.getElementById('chartMcxPnl'), {
+    type: 'bar',
+    data: { labels: metals, datasets: [
+      { label: 'MCX Realized', data: mcxReal, backgroundColor: COLORS.mcx, borderRadius: 6, maxBarThickness: 40 },
+      { label: 'MCX Open MTM', data: mcxMTM, backgroundColor: '#f5c890', borderRadius: 6, maxBarThickness: 40 },
+    ] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14 } } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
+  });
+
+  const lmeNet = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.lme.netQty)));
+  if (charts.lmeNet) charts.lmeNet.destroy();
+  charts.lmeNet = new Chart(document.getElementById('chartLmeNet'), {
+    type: 'bar',
+    data: { labels: metals, datasets: [
+      { label: 'LME Net Qty', data: lmeNet, backgroundColor: lmeNet.map(v => v >= 0 ? COLORS.pos : COLORS.neg), borderRadius: 6, maxBarThickness: 40 },
+    ] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
+  });
+
+  const mcxNet = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.mcx.netQty)));
+  if (charts.mcxNet) charts.mcxNet.destroy();
+  charts.mcxNet = new Chart(document.getElementById('chartMcxNet'), {
+    type: 'bar',
+    data: { labels: metals, datasets: [
+      { label: 'MCX Net Qty', data: mcxNet, backgroundColor: mcxNet.map(v => v >= 0 ? COLORS.pos : COLORS.neg), borderRadius: 6, maxBarThickness: 40 },
+    ] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: COLORS.grid }, ticks: { callback: fmtCompact } } } },
+  });
+
   const longQty  = sum(data.map(r => Math.max(0,  (r.lme.netQty||0) + (r.mcx.netQty||0))));
   const shortQty = sum(data.map(r => Math.max(0, -((r.lme.netQty||0) + (r.mcx.netQty||0)))));
-
   if (charts.position) charts.position.destroy();
   charts.position = new Chart(document.getElementById('chartPosition'), {
     type: 'doughnut',
@@ -1034,7 +1893,6 @@ function renderHedgeCharts(data) {
 
   const topLots = [...data].map(r => ({ lot: r.lot, pnl: r.totalRealized + r.totalMTM }))
     .sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 10);
-
   if (charts.topLots) charts.topLots.destroy();
   charts.topLots = new Chart(document.getElementById('chartTopLots'), {
     type: 'bar',
@@ -1047,7 +1905,6 @@ function renderHedgeCharts(data) {
 
   const lmeExposure = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.lme.netQty)));
   const mcxExposure = metals.map(m => sum(data.filter(r => r.metal === m).map(r => r.mcx.netQty)));
-
   if (charts.exposure) charts.exposure.destroy();
   charts.exposure = new Chart(document.getElementById('chartExposure'), {
     type: 'bar',
@@ -1159,19 +2016,22 @@ function loadFile(file) {
       const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
       const parsed = readWorkbook(wb);
 
+      RAW_BUYS  = parsed.buys;
+      RAW_SELLS = parsed.sells;
+      RAW_HEDGE = parsed.hedge;
+      RAW_LIVE  = parsed.live;
+
       PHYS  = buildPhysical(parsed.buys, parsed.sells);
       HEDGE = buildHedge(parsed.hedge, parsed.live, parsed.buys);
       DASH  = buildDashboard(PHYS, HEDGE);
 
-      const al1Sells = parsed.sells.filter(s => s.lot === 'AL1');
-      const al1Phys  = PHYS.find(p => p.lot === 'AL1');
+      buildAlerts();
 
       log(`Sheet "${parsed.sheetName}" (header row ${parsed.hdrRow + 1})\n` +
-          `Sells block: ${parsed.pos.sells.start} | Lot col: ${parsed.pos.sells.lot} | Qty col: ${parsed.pos.sells.qty} | Price col: ${parsed.pos.sells.price}\n` +
           `Parsed → buys=${parsed.buys.length}, sells=${parsed.sells.length}, live=${parsed.live.length}, hedge=${parsed.hedge.length}\n` +
-          `AL1 sells parsed: ${JSON.stringify(al1Sells)}\n` +
-          `AL1 physical: sold=${al1Phys ? al1Phys.physSellQty : 'N/A'}, avgSellPrice=${al1Phys ? al1Phys.physSellPrice.toFixed(2) : 'N/A'}, realized=${al1Phys ? al1Phys.physRealizedPnL.toFixed(2) : 'N/A'}\n` +
-          `✅ Built → Physical=${PHYS.length}, Hedge=${HEDGE.length}, Dashboard=${DASH.length}`);
+          `✅ Built → Physical=${PHYS.length} lots, Hedge=${HEDGE.length} lots, Dashboard=${DASH.length} lots\n` +
+          `🚨 Alerts: ${ALERTS.length} found\n` +
+          `💡 Click column headers to sort · Click any row to see transactions · Click Print for PDF`);
 
       const metals = [...new Set([...PHYS.map(r=>r.metal), ...HEDGE.map(r=>r.metal)])].filter(m => m && m !== '—').sort();
       populateFilter('fMetalPhys', metals);
@@ -1180,6 +2040,7 @@ function loadFile(file) {
 
       document.getElementById('main').style.display = 'block';
       document.getElementById('export').style.display = 'inline-block';
+      document.getElementById('print').style.display = 'inline-block';
 
       renderPhysical();
       renderHedge();
@@ -1192,9 +2053,27 @@ function loadFile(file) {
   reader.readAsArrayBuffer(file);
 }
 
-['searchPhys','fMetalPhys'].forEach(id => document.getElementById(id).addEventListener('input', renderPhysical));
-['searchHedge','fMetalHedge','fRemark'].forEach(id => document.getElementById(id).addEventListener('input', renderHedge));
-['searchDash','fMetalDash','fInstruction'].forEach(id => document.getElementById(id).addEventListener('input', renderDash));
+// ============ FILTER / SEARCH LISTENERS ============
+['searchPhys','fMetalPhys','physDateFrom','physDateTo'].forEach(id => document.getElementById(id).addEventListener('input', renderPhysical));
+document.getElementById('physClear').onclick = () => {
+  ['searchPhys','fMetalPhys','physDateFrom','physDateTo'].forEach(id => document.getElementById(id).value = '');
+  renderPhysical();
+};
+
+['searchHedge','fMetalHedge','fRemark','hedgeDateFrom','hedgeDateTo'].forEach(id => document.getElementById(id).addEventListener('input', renderHedge));
+document.getElementById('hedgeClear').onclick = () => {
+  ['searchHedge','fMetalHedge','fRemark','hedgeDateFrom','hedgeDateTo'].forEach(id => document.getElementById(id).value = '');
+  renderHedge();
+};
+
+['searchDash','fMetalDash','fInstruction','dashDateFrom','dashDateTo'].forEach(id => document.getElementById(id).addEventListener('input', renderDash));
+document.getElementById('dashClear').onclick = () => {
+  ['searchDash','fMetalDash','fInstruction','dashDateFrom','dashDateTo'].forEach(id => document.getElementById(id).value = '');
+  renderDash();
+};
+
+// ============ PRINT (#8) ============
+document.getElementById('print').onclick = () => window.print();
 
 // ============ EXPORT ============
 document.getElementById('export').addEventListener('click', () => {
@@ -1203,7 +2082,9 @@ document.getElementById('export').addEventListener('click', () => {
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(PHYS.map(r => ({
     'Lot ID': r.lot, Metal: r.metal, Status: r.physStatus,
     'Buy Date': fmtD(r.physBuyDate), 'Buy Qty': r.physBuyQty, 'Buy Price': r.physBuyPrice,
+    'Buyers': r.buyerNames.join(', '),
     'Sold Qty': r.physSellQty, 'Sell Price': r.physSellPrice,
+    'Sellers': r.sellerNames.join(', '),
     'In Stock': r.physInStockQty, Unsold: r.physUnpricedQty,
     'Realized PnL': r.physRealizedPnL,
   }))), 'Physical');
